@@ -3,6 +3,7 @@ from tkinter import *
 
 # kipi
 class BaseDatos: 
+
     def __init__(self, host, user, passw, nombre_bd):
         self.conexion =  pymysql.connect(host, user, passw, nombre_bd)
         self.cursor = self.conexion.cursor()
@@ -11,14 +12,27 @@ class BaseDatos:
         return self.conexion
 
     def select(self, tabla): # bd.select("Categorias") -> lista con todas las categorias (select * from tabla)
-        pass
+        list_select = []
+        self.cursor.execute("select * from " + tabla)
+        rows = self.cursor.fetchall() # Selecciona todo lo que contiene el cursor
+        
+        for row in rows:
+            list_select.append(row)
+
+        return list_select
 
     def select_filtrado(self, tabla, parametros): # lista con lo filtrado (select * from tabla where parametro)
         pass
         
-    def insert(self, tabla):
-        pass
-        
+    def insert(self, tabla, datos: tuple):
+        if isinstance(datos, tuple):
+            #TODO HACK: Hacerlo de otra manera más entendible.
+            argumentos = ", ".join(("%s "*len(datos)).split())
+            self.cursor.execute("insert into " + tabla + " values(" + argumentos + ")", (datos[0], datos[1]))
+            self.conexion.commit()
+        else:
+            raise ValueError("Debes introducir una tupla en el método insert.") # Paula quejica tq bb       
+
 
 class Nota:
     def __init__(self, titulo, contenido, categoria, usuario, identificador, etiquetas = None):
@@ -71,8 +85,14 @@ class Usuario:
 
 
 if __name__ == "__main__":
-    bd = BaseDatos("localhost", "keepit", "Antoniojose@10", "keepit") #host, user, passw, nombre_bd 
+    bd = BaseDatos("localhost", "root", "Antoniojose@10", "keepit") #host, user, passw, nombre_bd 
+    
     bd.cursor.execute("select * from Categorias")
     print(bd.cursor.rowcount)
     bd.get_conexion().commit()
+    bd.cursor.execute("delete from usuario")
+    bd.conexion.commit()
+    bd.insert("usuario", ("test@test.es", "paulaquejica"))
+    bd.insert("usuario", ("guille@test.es", "frantusmuerto"))
+    print(bd.select("usuario"))
     
