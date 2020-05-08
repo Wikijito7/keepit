@@ -109,5 +109,5 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 
 -- USUARIO BASE DE DATOS --
 CREATE USER 'keepit'@'localhost' IDENTIFIED BY 'keepit';
-GRANT ALL PRIVILEGES ON * . * TO 'keepit'@'localhost';
+GRANT ALL PRIVILEGES ON keepit. * TO 'keepit'@'localhost';
 FLUSH PRIVILEGES;
