@@ -14,11 +14,23 @@ class BaseDatos:
         list_select = []
         self.cursor.execute("select * from " + tabla)
         rows = self.cursor.fetchall() # Selecciona todo lo que contiene el cursor
-        
         for row in rows:
             list_select.append(row)
 
         return list_select
+
+    def usuario_login(self, email, password):
+        """Login comprueba la entrada, consulta si existe en la bd y carga la instancia de Usuario"""
+        if isinstance(email, str) and isinstance(password, str):
+            self.cursor.execute("select * from usuario")
+            # lista_usuarios = [Usuario(user, passw) for user,passw in self.cursor.fetchall() if email == user and password == passw]
+            for (user, passw) in self.cursor.fetchall():
+                if email == user and password == passw:
+                    return Usuario(email, password)    
+            return None    
+        else:
+            # TODO mostrar warning
+            pass     
 
     def select_filtrado(self, tabla, parametros): # lista con lo filtrado (select * from tabla where parametro)
         """Recibe una tupla, el primer parámetro de la tupla indica dónde busca y el segundo qué busca"""
@@ -38,7 +50,8 @@ class BaseDatos:
         else:
             # TODO: Añadir warning
             pass
-
+    
+    # TODO hacer aquí el update pishar 
         
     def insert(self, tabla, datos: tuple):
         if isinstance(datos, tuple):
@@ -100,16 +113,24 @@ class Usuario:
         return self.email
 
 
+
+
 if __name__ == "__main__":
+    # Test conexion clase BaseDatos
     bd = BaseDatos("localhost", "root", "Antoniojose@10", "keepit") #host, user, passw, nombre_bd 
     
+    # Test atributo execute clase BaseDatos
     bd.cursor.execute("select * from Categorias")
     print(bd.cursor.rowcount)
     bd.get_conexion().commit()
     bd.cursor.execute("delete from usuario")
     bd.conexion.commit()
+    
+    # Tests metodo insert clase BaseDatos 
     bd.insert("usuario", ("test@test.es", "paulaquejica"))
     bd.insert("usuario", ("guille@test.es", "frantusmuerto"))
     
     # print(bd.select("usuario"))
     print(bd.select_filtrado("usuario", ("email", "test@")))
+    
+    print(bd.usuario_login("guille@test.es", "frantusmuerto"))
