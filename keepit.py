@@ -49,9 +49,16 @@ class BaseDatos:
 
         else:
             # TODO: Añadir warning
-            pass
+            raise ValueError("param must be a tuple with to args where to look for and what to look")
+            
     
-    # TODO hacer aquí el update pishar 
+    def update(self, tabla, param: tuple):
+        if isinstance(param, tuple) and len(param) == 2:
+            self.cursor.execute("update " + tabla + " set " + param[0] + " = " + param[1])
+            self.conexion.commit()
+        else:
+            #TODO añadir earning
+            raise ValueError("param must be a tuple with to args where to look for and what to look")
         
     def insert(self, tabla, datos: tuple):
         if isinstance(datos, tuple):
