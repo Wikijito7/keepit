@@ -2,8 +2,7 @@ import pymysql
 from tkinter import *
 
 # kipi
-class BaseDatos: 
-
+class BaseDatos:
     def __init__(self, host, user, passw, nombre_bd):
         self.conexion =  pymysql.connect(host, user, passw, nombre_bd)
         self.cursor = self.conexion.cursor()
@@ -22,13 +21,30 @@ class BaseDatos:
         return list_select
 
     def select_filtrado(self, tabla, parametros): # lista con lo filtrado (select * from tabla where parametro)
-        pass
+        """Recibe una tupla, el primer parámetro de la tupla indica dónde busca y el segundo qué busca"""
+        if isinstance(parametros, tuple) and len(parametros) == 2:
+        # select * from tabla where algo = parametro // select * from usuario where email like %as%
+            list_select = []
+            regex =  "'%" + parametros[1] + "%'"
+            # select * from usuario where email like '%st@%';
+            self.cursor.execute("select * from " + tabla + " where " + parametros[0] + " like " + regex)
+            
+            rows = self.cursor.fetchall()
+            for row in rows:
+                    list_select.append(row)
+
+            return list_select
+
+        else:
+            # TODO: Añadir warning
+            pass
+
         
     def insert(self, tabla, datos: tuple):
         if isinstance(datos, tuple):
-            #TODO HACK: Hacerlo de otra manera más entendible.
+            # TODO HACK: Hacerlo de otra manera más entendible.
             argumentos = ", ".join(("%s "*len(datos)).split())
-            self.cursor.execute("insert into " + tabla + " values(" + argumentos + ")", (datos[0], datos[1]))
+            self.cursor.execute("insert into " + tabla + " values(" + argumentos + ")", datos)
             self.conexion.commit()
         else:
             raise ValueError("Debes introducir una tupla en el método insert.") # Paula quejica tq bb       
@@ -94,5 +110,6 @@ if __name__ == "__main__":
     bd.conexion.commit()
     bd.insert("usuario", ("test@test.es", "paulaquejica"))
     bd.insert("usuario", ("guille@test.es", "frantusmuerto"))
-    print(bd.select("usuario"))
     
+    # print(bd.select("usuario"))
+    print(bd.select_filtrado("usuario", ("email", "test@")))
