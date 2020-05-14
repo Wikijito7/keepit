@@ -44,27 +44,27 @@ class BaseDatos:
             rows = self.cursor.fetchall()
             for row in rows:
                     list_select.append(row)
-
             return list_select
-
         else:
             # TODO: Añadir warning
-            raise ValueError("param must be a tuple with to args where to look for and what to look")
+            raise ValueError("Parámetros debe ser una tupla con dos parámetros.")
             
     
-    def update(self, tabla, param: tuple):
-        if isinstance(param, tuple) and len(param) == 2:
-            self.cursor.execute("update " + tabla + " set " + param[0] + " = " + param[1])
+    def update(self, tabla, parametros: tuple):
+        #TODO Pendiente de datle una vueltes
+        if isinstance(parametros, tuple) and len(parametros) == 2:
+            self.cursor.execute("update " + tabla + " set " + parametros[0] + " = " + parametros[1])
             self.conexion.commit()
         else:
             #TODO añadir earning
-            raise ValueError("param must be a tuple with to args where to look for and what to look")
+            raise ValueError("Debes introducir una tupla en el método update.")
+        
         
     def insert(self, tabla, datos: tuple):
         if isinstance(datos, tuple):
             # TODO HACK: Hacerlo de otra manera más entendible.
-            argumentos = ", ".join(("%s "*len(datos)).split())
-            self.cursor.execute("insert into " + tabla + " values(" + argumentos + ")", datos)
+            args = ", ".join(("%s " * len(datos)).split())
+            self.cursor.execute("insert into " + tabla + " values(" + args + ")", datos)
             self.conexion.commit()
         else:
             raise ValueError("Debes introducir una tupla en el método insert.") # Paula quejica tq bb       
@@ -118,7 +118,6 @@ class Usuario:
     
     def get_email(self):
         return self.email
-
 
 
 

@@ -7,7 +7,8 @@ from tkinter.ttk import Treeview
 
 class login_register:
     # TODO Crear el formulario de login/register
-    pass
+    def __init__(self):
+        
 
 class gui_notas:
     # TODO Crear el formulario de las notas
