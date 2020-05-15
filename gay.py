@@ -73,15 +73,29 @@ class login_register:
 # .tq bb yo tambien :) shh
 class Gui_notas:
     # TODO Crear el formulario de las notas
-    def __init__(self, usuario, bd):
+    def __init__(self,usuario,bd):
         self.gui_notas = tk.Tk()
         self.bd = bd
         self.usuario = usuario
-        self.notas = self.bd.select_filtrado("notas", ("Usuario_email", usuario.get_email()))
+        self.notas = []
         self.gui_notas.geometry("1024x768")
         self.gui_notas.title("Kipi.gay v0.1")
+        self.obtener_notas()
         self.gui_notas_load_widgets()
-        self.gui_notas_load_widgets.mainloop()
+        self.gui_notas.mainloop()
+
+    def obtener_notas(self):
+        notas_temporales = self.bd.select_filtrado("notas", ("Usuario_email", usuario.get_email()))
+        # titulo, contenido, categoria, usuario, identificador, etiquetas = None
+        for nota in notas_temporales:
+            etiquetas = []
+            etiquetas_id = self.bd.select_filtrado("Notas_has_Etiquetas", ("Notas_id_notas", nota[0]))
+            for etiqueta_id in etiquetas_id:
+                etiqueta = self.bd.select_filtrado("etiquetas", ("id_etiquetas", etiqueta_id))
+                etiquetas.append(etiqueta)
+            self.notas.append(Nota(nota[1], nota[2], nota[3], self.usuario, nota[0], etiquetas))
+        for nota in self.notas:
+            print(nota)
 
     def gui_notas_load_widgets(self):
         pass
@@ -115,15 +129,35 @@ if __name__ == "__main__":
     print(bd.cursor.rowcount)
     bd.get_conexion().commit()
     bd.cursor.execute("delete from usuario")
+    bd.cursor.execute("delete from notas")
+    bd.cursor.execute("delete from categorias")
+    
     bd.conexion.commit()
     
     # Tests metodo insert clase BaseDatos 
     bd.insert("usuario", ("test@test.es", "paulaquejica"))
     bd.insert("usuario", ("guille@test.es", "frantusmuerto"))
+
+    bd.insert("categorias", ("paula",))
+    bd.insert("categorias", ("escocia",))
+
+    bd.insert("notas", (1,"Quejica","Eres una quejica","paula","guille@test.es"))
+    bd.insert("notas", (1,"Lloro","hola soy un llorica Davileño", "escocia","guille@test.es"))
+    """
+    insert into categorias
+values("paula"),
+	("escocia");
+
+insert into notas(titulo, contenido, categoria, usuario_email)
+values("Quejica","Eres una quejica","paula","guille@test.es"),
+	("Lloro","hola soy un llorica Antonio", "escocia","guille@test.es");
+    """
     
     # print(bd.select("usuario"))
     print(bd.select_filtrado("usuario", ("email", "test@")))
     
     print(bd.usuario_login("guille@test.es", "frantusmuerto"))
 
-    login_register(bd)
+    # login_register(bd)
+    usuario = bd.usuario_login("guille@test.es", "frantusmuerto")    
+    Gui_notas(usuario,bd)

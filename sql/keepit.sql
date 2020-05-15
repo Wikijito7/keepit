@@ -57,12 +57,12 @@ CREATE TABLE IF NOT EXISTS `keepit`.`Notas` (
   CONSTRAINT `fk_Notas_Categoria`
     FOREIGN KEY (`categoria`)
     REFERENCES `keepit`.`Categorias` (`Nombre`)
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Notas_Usuario1`
     FOREIGN KEY (`Usuario_email`)
-    REFERENCES `keepit`.`Usuario` (`email`)
-    ON DELETE NO ACTION
+    REFERENCES `keepit`.`Usuario`(`email`)
+    ON DELETE CASCADE
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
@@ -76,17 +76,17 @@ CREATE TABLE IF NOT EXISTS `keepit`.`Notas_has_Etiquetas` (
   `Notas_id_notas` INT NOT NULL,
   `Etiquetas_id_etiquetas` INT NOT NULL,
   PRIMARY KEY (`Notas_id_notas`, `Etiquetas_id_etiquetas`),
-  INDEX `fk_Notas_has_Etiquetas_Etiquetas1_idx` (`Etiquetas_id_etiquetas` ASC) VISIBLE,
+  INDEX ` fk_Notas_has_Etiquetas_Etiquetas1_idx` (`Etiquetas_id_etiquetas` ASC) VISIBLE,
   INDEX `fk_Notas_has_Etiquetas_Notas1_idx` (`Notas_id_notas` ASC) VISIBLE,
   CONSTRAINT `fk_Notas_has_Etiquetas_Notas1`
     FOREIGN KEY (`Notas_id_notas`)
     REFERENCES `keepit`.`Notas` (`id_notas`)
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Notas_has_Etiquetas_Etiquetas1`
     FOREIGN KEY (`Etiquetas_id_etiquetas`)
     REFERENCES `keepit`.`Etiquetas` (`id_etiquetas`)
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
@@ -109,5 +109,8 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 
 -- USUARIO BASE DE DATOS --
 CREATE USER 'keepit'@'localhost' IDENTIFIED BY 'keepit';
-GRANT ALL PRIVILEGES ON keepit. * TO 'keepit'@'localhost';
+GRANT ALL PRIVILEGES ON * . * TO 'keepit'@'localhost';
 FLUSH PRIVILEGES;
+
+
+

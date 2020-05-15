@@ -37,7 +37,7 @@ class BaseDatos:
         if isinstance(parametros, tuple) and len(parametros) == 2:
         # select * from tabla where algo = parametro // select * from usuario where email like %as%
             list_select = []
-            regex =  "'%" + parametros[1] + "%'"
+            regex =  "'%" + str(parametros[1]) + "%'"
             # select * from usuario where email like '%st@%';
             self.cursor.execute("select * from " + tabla + " where " + parametros[0] + " like " + regex)
             
@@ -105,6 +105,9 @@ class Nota:
     def set_categoria(self, nueva_categoria: str):
         if isinstance(nueva_categoria, str):
             self.categoria = nueva_categoria
+
+    def __str__(self):
+        return f"Nota(titulo: '{self.titulo}', categoría: '{self.categoria}', contenido: '{self.contenido}', usuario: '{self.usuario}', identificador: '{self.identificador}', etiquetas: '{self.etiquetas}')"        
         
 
 class Usuario:
