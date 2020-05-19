@@ -123,7 +123,7 @@ class Usuario:
 
 if __name__ == "__main__":
     # Test conexion clase BaseDatos
-    bd = BaseDatos("localhost", "root", "Antoniojose@10", "keepit")  # host, user, passw, nombre_bd
+    bd = BaseDatos("localhost", "root", "root", "keepit")  # host, user, passw, nombre_bd
 
     # Test atributo execute clase BaseDatos
     bd.cursor.execute("select * from Categorias")

@@ -68,7 +68,7 @@ class LoginRegisterGui:
         self.btn_exit.grid(column=2, row=4, pady=20, padx=10)
 
         #  l1.grid(row=0, column=0, padx=(100, 10)) izq derc
-        #   l2.grid(row=1, column=0, pady=(10, 100)) arriba abajo
+        #  l2.grid(row=1, column=0, pady=(10, 100)) arriba abajo
 
 
 # .tq bb yo tambien :) shh
@@ -86,20 +86,45 @@ class NotasGui:
         self.gui_notas.mainloop()
 
     def obtener_notas(self):
-        notas_temporales = self.bd.select_filtrado("notas", ("Usuario_email", usuario.get_email()))
+        notas_temporales = self.bd.select_filtrado("notas", ("Usuario_email", self.usuario.get_email()))
         # titulo, contenido, categoria, usuario, identificador, etiquetas = None
         for nota in notas_temporales:
             etiquetas = []
             etiquetas_id = self.bd.select_filtrado("Notas_has_Etiquetas", ("Notas_id_notas", nota[0]))
             for etiqueta_id in etiquetas_id:
-                etiqueta = self.bd.select_filtrado("etiquetas", ("id_etiquetas", etiqueta_id))
-                etiquetas.append(etiqueta)
+                etiqueta = self.bd.select_filtrado("etiquetas", ("id_etiquetas", etiqueta_id[1]))
+                print(etiqueta, etiqueta[0][0])
+                etiquetas.append(etiqueta[0][0])
             self.notas.append(Nota(nota[1], nota[2], nota[3], self.usuario, nota[0], etiquetas))
         for nota in self.notas:
             print(nota)
 
+    def cargar_notas(self):
+        for n in range(6):
+            if n > len(self.notas)-1:
+                break
+
+            nota = self.notas[n]
+            m = 2
+            col = n % m
+            row = 2*m * (n // m)
+
+            self.txt_titulo = tk.Label(self.gui_notas, text=nota.titulo)
+            self.txt_titulo.grid(column=col, row=0 + row, pady=(10, 5), padx=20)
+            self.txt_categoria = tk.Label(self.gui_notas, text=nota.categoria)
+            self.txt_categoria.grid(column=col, row=1 + row, pady=(10, 5), padx=20)
+            if len(nota.etiquetas) != 0:
+                self.txt_etiquetas = tk.Label(self.gui_notas, text=nota.etiquetas)
+                self.txt_etiquetas.grid(column=col, row=2 + row, pady=(10, 5), padx=20)
+            else:
+                self.txt_etiquetas = tk.Label(self.gui_notas, text="Sin etiquetas.")
+                self.txt_etiquetas.grid(column=col, row=2 + row, pady=(10, 5), padx=20)
+            self.txt_contenido = tk.Label(self.gui_notas, text=nota.contenido)
+            self.txt_contenido.grid(column=col, row=3 + row, pady=(10, 5), padx=20)
+
     def gui_notas_load_widgets(self):
-        pass
+
+        self.cargar_notas()
 
 
 class CrearNotaGui:
@@ -126,15 +151,12 @@ class BusquedaGui:
 
 if __name__ == "__main__":
     # Test conexion clase BaseDatos
-    bd = BaseDatos("localhost", "root", "Antoniojose@10", "keepit")  # host, user, passw, nombre_bd
+    bd = BaseDatos("localhost", "root", "root", "keepit")  # host, user, passw, nombre_bd
     # Test atributo execute clase BaseDatos
-    bd.cursor.execute("select * from Categorias")
-    print(bd.cursor.rowcount)
-    bd.get_conexion().commit()
     bd.cursor.execute("delete from usuario")
     bd.cursor.execute("delete from notas")
     bd.cursor.execute("delete from categorias")
-
+    bd.cursor.execute("delete from etiquetas")
     bd.conexion.commit()
 
     # Tests metodo insert clase BaseDatos 
@@ -144,8 +166,13 @@ if __name__ == "__main__":
     bd.insert("categorias", ("paula",))
     bd.insert("categorias", ("escocia",))
 
-    bd.insert("notas", (1, "Quejica", "Eres una quejica", "paula", "guille@test.es"))
-    bd.insert("notas", (1, "Lloro", "hola soy un llorica Davileño", "escocia", "guille@test.es"))
+    bd.insert("notas", (None, "Quejica", "Eres una quejica", "paula", "guille@test.es"))
+    bd.insert("notas", (None, "Lloro", "hola soy un llorica Davileño", "escocia", "guille@test.es"))
+
+    bd.insert("etiquetas", ("quejas", 1))
+
+    bd.insert("Notas_has_Etiquetas", (34, 1))
+
     """
         insert into categorias
     values("paula"),
@@ -161,6 +188,6 @@ if __name__ == "__main__":
 
     print(bd.usuario_login("guille@test.es", "frantusmuerto"))
 
-    # login_register(bd)
+    LoginRegisterGui(bd)
     usuario = bd.usuario_login("guille@test.es", "frantusmuerto")
-    NotasGui(usuario, bd)
+    # NotasGui(usuario, bd)

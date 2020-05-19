@@ -8,7 +8,7 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,N
 -- -----------------------------------------------------
 -- Schema keepit
 -- -----------------------------------------------------
-DROP SCHEMA IF EXISTS `keepit` ;
+-- DROP SCHEMA IF EXISTS `keepit` ;
 
 -- -----------------------------------------------------
 -- Schema keepit
@@ -34,7 +34,7 @@ DROP TABLE IF EXISTS `keepit`.`Etiquetas` ;
 
 CREATE TABLE IF NOT EXISTS `keepit`.`Etiquetas` (
   `nombre` VARCHAR(45) NOT NULL,
-  `id_etiquetas` INT NOT NULL auto_increment,
+  `id_etiquetas` INT NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`id_etiquetas`),
   UNIQUE INDEX `nombre_UNIQUE` (`nombre` ASC) VISIBLE)
 ENGINE = InnoDB;
