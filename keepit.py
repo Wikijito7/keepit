@@ -113,6 +113,21 @@ class Nota:
         if isinstance(nueva_categoria, str):
             self.categoria = nueva_categoria
 
+    def get_titulo(self):
+        return self.titulo
+
+    def set_titulo(self, titulo):
+        self.titulo = titulo
+
+    def get_etiquetas_str(self):
+        return ", ".join(self.etiquetas)
+
+    def get_contenido(self):
+        return self.contenido
+
+    def set_contenido(self, contenido):
+        self.contenido = contenido
+
     def __str__(self):
         return f"Nota(titulo: '{self.titulo}', categoría: '{self.categoria}', contenido: '{self.contenido}', usuario: '{self.usuario}', identificador: '{self.identificador}', etiquetas: '{self.etiquetas}')"
 

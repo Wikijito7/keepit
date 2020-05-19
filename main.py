@@ -93,37 +93,36 @@ class NotasGui:
             etiquetas_id = self.bd.select_filtrado("Notas_has_Etiquetas", ("Notas_id_notas", nota[0]))
             for etiqueta_id in etiquetas_id:
                 etiqueta = self.bd.select_filtrado("etiquetas", ("id_etiquetas", etiqueta_id[1]))
-                print(etiqueta, etiqueta[0][0])
                 etiquetas.append(etiqueta[0][0])
             self.notas.append(Nota(nota[1], nota[2], nota[3], self.usuario, nota[0], etiquetas))
         for nota in self.notas:
             print(nota)
 
     def cargar_notas(self):
+        self.titulo = tk.Label(self.gui_notas, text="Keepit")
+        self.titulo.config(font=("Arial", 20))
+        self.titulo.grid(column=0, row=0)
+
         for n in range(6):
             if n > len(self.notas) - 1:
                 break
 
             nota = self.notas[n]
-            m = 2
+            m = 3
             col = n % m
             row = 2 * m * (n // m)
 
-            self.txt_titulo = tk.Label(self.gui_notas, text=nota.titulo)
-            self.txt_titulo.grid(column=col, row=0 + row, pady=(10, 5), padx=20)
-            self.txt_categoria = tk.Label(self.gui_notas, text=nota.categoria)
-            self.txt_categoria.grid(column=col, row=1 + row, pady=(10, 5), padx=20)
-            if len(nota.etiquetas) != 0:
-                self.txt_etiquetas = tk.Label(self.gui_notas, text=nota.etiquetas)
-                self.txt_etiquetas.grid(column=col, row=2 + row, pady=(10, 5), padx=20)
+            x, y = (328 + 160 * col, 278 + 20 * row)
+
+            self.txt_titulo = tk.Label(self.gui_notas, text=f"{nota.get_titulo()}").place(x=x, y=y)
+            self.txt_categoria = tk.Label(self.gui_notas, text=f"{nota.get_categoria()}").place(x=x, y=y + 20)
+            if len(nota.etiquetas) > 0:
+                self.txt_etiquetas = tk.Label(self.gui_notas, text=f"{nota.get_etiquetas_str()}").place(x=x, y=y + 40)
             else:
-                self.txt_etiquetas = tk.Label(self.gui_notas, text="Sin etiquetas.")
-                self.txt_etiquetas.grid(column=col, row=2 + row, pady=(10, 5), padx=20)
-            self.txt_contenido = tk.Label(self.gui_notas, text=nota.contenido)
-            self.txt_contenido.grid(column=col, row=3 + row, pady=(10, 5), padx=20)
+                self.txt_etiquetas = tk.Label(self.gui_notas, text="Sin etiquetas").place(x=x, y=y + 40)
+            self.txt_contenido = tk.Label(self.gui_notas, text=f"{nota.get_contenido()}", justify="left", wraplength=120).place(x=x, y=y + 60)
 
     def gui_notas_load_widgets(self):
-
         self.cargar_notas()
 
 
@@ -151,7 +150,7 @@ class BusquedaGui:
 
 if __name__ == "__main__":
     # Test conexion clase BaseDatos
-    bd = BaseDatos("localhost", "root", "Antoniojose@10", "keepit")  # host, user, passw, nombre_bd
+    bd = BaseDatos("localhost", "root", "root", "keepit")  # host, user, passw, nombre_bd
     # Test atributo execute clase BaseDatos
     bd.cursor.execute("delete from usuario")
     bd.cursor.execute("delete from notas")
@@ -190,6 +189,6 @@ if __name__ == "__main__":
 
     print(bd.usuario_login("guille@test.es", "frantusmuerto"))
 
-    LoginRegisterGui(bd)
+    #LoginRegisterGui(bd)
     usuario = bd.usuario_login("guille@test.es", "frantusmuerto")
-    # NotasGui(usuario, bd)
+    NotasGui(usuario, bd)
