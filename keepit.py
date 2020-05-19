@@ -67,10 +67,19 @@ class BaseDatos:
         else:
             raise ValueError("Debes introducir una tupla en el método insert.")  # Paula quejica tq bb
 
+    def obtain_id(self):
+        """
+        execute a select to search id
+        :return {int}: return last id_nota
+        """
+        self.cursor.execute("select max(id_notas) from Notas")
+        return self.cursor.fetchall()[0][0]
+
 
 class Nota:
     def __init__(self, titulo, contenido, categoria, usuario, identificador, etiquetas=None):
-        if isinstance(titulo, str) and isinstance(categoria, str) and isinstance(contenido, str) and isinstance(usuario, Usuario):
+        if isinstance(titulo, str) and isinstance(categoria, str) and isinstance(contenido, str) and isinstance(usuario,
+                                                                                                                Usuario):
             self.titulo = titulo
             self.categoria = categoria  # ""
             self.contenido = contenido
@@ -123,7 +132,7 @@ class Usuario:
 
 if __name__ == "__main__":
     # Test conexion clase BaseDatos
-    bd = BaseDatos("localhost", "root", "root", "keepit")  # host, user, passw, nombre_bd
+    bd = BaseDatos("localhost", "root", "Antoniojose@10", "keepit")  # host, user, passw, nombre_bd
 
     # Test atributo execute clase BaseDatos
     bd.cursor.execute("select * from Categorias")
@@ -132,7 +141,7 @@ if __name__ == "__main__":
     bd.cursor.execute("delete from usuario")
     bd.conexion.commit()
 
-    # Tests metodo insert clase BaseDatos 
+    # Tests metodo insert clase BaseDatos
     bd.insert("usuario", ("test@test.es", "paulaquejica"))
     bd.insert("usuario", ("guille@test.es", "frantusmuerto"))
 

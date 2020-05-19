@@ -101,13 +101,13 @@ class NotasGui:
 
     def cargar_notas(self):
         for n in range(6):
-            if n > len(self.notas)-1:
+            if n > len(self.notas) - 1:
                 break
 
             nota = self.notas[n]
             m = 2
             col = n % m
-            row = 2*m * (n // m)
+            row = 2 * m * (n // m)
 
             self.txt_titulo = tk.Label(self.gui_notas, text=nota.titulo)
             self.txt_titulo.grid(column=col, row=0 + row, pady=(10, 5), padx=20)
@@ -151,7 +151,7 @@ class BusquedaGui:
 
 if __name__ == "__main__":
     # Test conexion clase BaseDatos
-    bd = BaseDatos("localhost", "root", "root", "keepit")  # host, user, passw, nombre_bd
+    bd = BaseDatos("localhost", "root", "Antoniojose@10", "keepit")  # host, user, passw, nombre_bd
     # Test atributo execute clase BaseDatos
     bd.cursor.execute("delete from usuario")
     bd.cursor.execute("delete from notas")
@@ -171,7 +171,9 @@ if __name__ == "__main__":
 
     bd.insert("etiquetas", ("quejas", 1))
 
-    bd.insert("Notas_has_Etiquetas", (34, 1))
+    id = bd.obtain_id()
+    bd.insert("Notas_has_Etiquetas", (id, 1))
+
 
     """
         insert into categorias
