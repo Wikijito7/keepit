@@ -100,40 +100,34 @@ class NotasGui:
             print(nota)
 
     def cargar_notas(self):
-        self.titulo = tk.Label(self.gui_notas, text="Keepit", font=("Arial", 20)).place(x=20, y=20)
-
-        self.btn_crear_nota = tk.Button(self.gui_notas, text="Nueva Nota", width=15, height=4,
-                                        font=("Arial", 12),
-                                        command=self.load_gui_crear_notas).place(x=500, y=600)
-
         for n in range(6):
-            if n > len(self.notas) - 1:
+            if n > len(self.notas)-1:
                 break
 
             nota = self.notas[n]
             m = 3
+            font_size = 12
             col = n % m
             row = 2 * m * (n // m)
-            font_size = 12
-            x, y = (328 + 160 * col, 278 + 20 * row)
 
-            self.txt_titulo = tk.Label(self.gui_notas, text=f"{nota.get_titulo()}", font=("Arial", font_size)).place(
-                x=x, y=y + font_size)
-            self.txt_categoria = tk.Label(self.gui_notas, text=f"{nota.get_categoria()}",
-                                          font=("Arial", font_size)).place(x=x, y=y + 25 + font_size)
+            x, y = (308 + 185 * col, 238 + 30 * row)
+            canvas = tk.Canvas(self.gui_notas)
+            self.txt_titulo = tk.Label(self.gui_notas, text=nota.get_titulo(), wraplength=130,
+                                       font=("Arial", font_size, "bold"), justify="center").place(x=x, y=y)
+            self.btn_vereditar = tk.Button(self.gui_notas, text="Ver/Editar", width=12,
+                                           font=("Arial", font_size)).place(x=x, y=y + 50)
+            self.btn_eliminar = tk.Button(self.gui_notas, text="Eliminar", width=12, font=("Arial", font_size)).place(
+                x=x, y=y + 90)
 
-            if len(nota.etiquetas) > 0:
-                self.txt_etiquetas = tk.Label(self.gui_notas, text=f"{nota.get_etiquetas_str()}",
-                                              font=("Arial", font_size)).place(x=x, y=y + 50 + font_size)
-            else:
-                self.txt_etiquetas = tk.Label(self.gui_notas, text="Sin etiquetas", font=("Arial", font_size)).place(
-                    x=x, y=y + 50 + font_size)
-            self.txt_contenido = tk.Label(self.gui_notas, text=f"{nota.get_contenido()}", font=("Arial", font_size),
-                                          justify="left", wraplength=120).place(x=x, y=y + 75 + font_size)
+            canvas.create_rectangle(20, 20, 180, 170, outline="#000", width=2)
+            canvas.place(x=x - 40, y=y - 30)
 
     def gui_notas_load_widgets(self):
+        self.titulo = tk.Label(self.gui_notas, text="Keepit", font=("Arial", 20)).place(x=20, y=20)
+        self.btn_buscar = tk.Button(self.gui_notas, text="Buscar", font=("Arial, 14"), width=12).place(x=846, y=20)
+        self.btn_buscar = tk.Button(self.gui_notas, text="Cerrar sesión", font=("Arial, 14"), width=12).place(x=846,
+                                                                                                              y=700)
         self.cargar_notas()
-
     def load_gui_crear_notas(self):
         CrearNotaGui(self.bd, self.notas, self.usuario, self.gui_notas)
 
