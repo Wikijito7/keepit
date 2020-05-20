@@ -99,9 +99,7 @@ class NotasGui:
             print(nota)
 
     def cargar_notas(self):
-        self.titulo = tk.Label(self.gui_notas, text="Keepit")
-        self.titulo.config(font=("Arial", 20))
-        self.titulo.grid(column=0, row=0)
+        self.titulo = tk.Label(self.gui_notas, text="Keepit", font=("Arial", 20)).place(x=20, y=20)
 
         for n in range(6):
             if n > len(self.notas) - 1:
@@ -111,16 +109,16 @@ class NotasGui:
             m = 3
             col = n % m
             row = 2 * m * (n // m)
-
+            font_size = 12
             x, y = (328 + 160 * col, 278 + 20 * row)
 
-            self.txt_titulo = tk.Label(self.gui_notas, text=f"{nota.get_titulo()}").place(x=x, y=y)
-            self.txt_categoria = tk.Label(self.gui_notas, text=f"{nota.get_categoria()}").place(x=x, y=y + 20)
+            self.txt_titulo = tk.Label(self.gui_notas, text=f"{nota.get_titulo()}", font=("Arial", font_size)).place(x=x, y=y + font_size)
+            self.txt_categoria = tk.Label(self.gui_notas, text=f"{nota.get_categoria()}", font=("Arial", font_size)).place(x=x, y=y + 25 + font_size)
             if len(nota.etiquetas) > 0:
-                self.txt_etiquetas = tk.Label(self.gui_notas, text=f"{nota.get_etiquetas_str()}").place(x=x, y=y + 40)
+                self.txt_etiquetas = tk.Label(self.gui_notas, text=f"{nota.get_etiquetas_str()}", font=("Arial", font_size)).place(x=x, y=y + 50 + font_size)
             else:
-                self.txt_etiquetas = tk.Label(self.gui_notas, text="Sin etiquetas").place(x=x, y=y + 40)
-            self.txt_contenido = tk.Label(self.gui_notas, text=f"{nota.get_contenido()}", justify="left", wraplength=120).place(x=x, y=y + 60)
+                self.txt_etiquetas = tk.Label(self.gui_notas, text="Sin etiquetas", font=("Arial", font_size)).place(x=x, y=y + 50 + font_size)
+            self.txt_contenido = tk.Label(self.gui_notas, text=f"{nota.get_contenido()}", font=("Arial", font_size), justify="left", wraplength=120).place(x=x, y=y + 75 + font_size)
 
     def gui_notas_load_widgets(self):
         self.cargar_notas()
