@@ -4,3 +4,4 @@ __pycache__/Icon
 __pycache__/keepit.cpython-37.pyc
 
 /bd.txt
+*.xml

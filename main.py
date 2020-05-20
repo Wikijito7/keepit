@@ -154,7 +154,7 @@ class BusquedaGui:
 
 if __name__ == "__main__":
     # Usuario y contraseña
-    manf = open("bd.txt")
+    manf = open("bd.txt", "r")
     # Test conexion clase BaseDatos
     bd = BaseDatos("localhost", manf.readline().rstrip(), manf.readline().rstrip(), "keepit")  # host, user, passw, nombre_bd
     # Test atributo execute clase BaseDatos
