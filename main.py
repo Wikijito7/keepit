@@ -102,6 +102,11 @@ class NotasGui:
     def cargar_notas(self):
         self.titulo = tk.Label(self.gui_notas, text="Keepit", font=("Arial", 20)).place(x=20, y=20)
 
+        self.btn_crear_nota = tk.Button(self.gui_notas, text="Nueva Nota", width=15, height=4,
+                                        font=("Arial", 12),
+                                        command=self.load_gui_crear_notas).place(x=500, y=600)
+
+
         for n in range(6):
             if n > len(self.notas) - 1:
                 break
@@ -117,6 +122,7 @@ class NotasGui:
                 x=x, y=y + font_size)
             self.txt_categoria = tk.Label(self.gui_notas, text=f"{nota.get_categoria()}",
                                           font=("Arial", font_size)).place(x=x, y=y + 25 + font_size)
+
             if len(nota.etiquetas) > 0:
                 self.txt_etiquetas = tk.Label(self.gui_notas, text=f"{nota.get_etiquetas_str()}",
                                               font=("Arial", font_size)).place(x=x, y=y + 50 + font_size)
@@ -126,13 +132,24 @@ class NotasGui:
             self.txt_contenido = tk.Label(self.gui_notas, text=f"{nota.get_contenido()}", font=("Arial", font_size),
                                           justify="left", wraplength=120).place(x=x, y=y + 75 + font_size)
 
+
+
     def gui_notas_load_widgets(self):
         self.cargar_notas()
 
+    def load_gui_crear_notas(self):
+        CrearNotaGui(self.bd, self.notas, self.usuario, self.gui_notas)
+
 
 class CrearNotaGui:
-    # TODO Crear el formulario de añadir una nueva nota
-    pass
+    def __init__(self, bd, notas, usuario, gui_notas):
+        self.bd = bd
+        self.notas = notas
+        self.usuario = usuario
+        self.gui_crea_notas = tk.Toplevel(gui_notas)
+
+    def close_gui_crea_notas(self):
+        self.gui_crea_notas.withdraw()
 
 
 class ModNotasGui:
@@ -156,7 +173,8 @@ if __name__ == "__main__":
     # Usuario y contraseña
     manf = open("bd.txt", "r")
     # Test conexion clase BaseDatos
-    bd = BaseDatos("localhost", manf.readline().rstrip(), manf.readline().rstrip(), "keepit")  # host, user, passw, nombre_bd
+    bd = BaseDatos("localhost", manf.readline().rstrip(), manf.readline().rstrip(),
+                   "keepit")  # host, user, passw, nombre_bd
     # Test atributo execute clase BaseDatos
     manf.close()
     bd.cursor.execute("delete from usuario")
