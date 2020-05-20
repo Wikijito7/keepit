@@ -125,8 +125,11 @@ class NotasGui:
     def gui_notas_load_widgets(self):
         self.titulo = tk.Label(self.gui_notas, text="Keepit", font=("Arial", 20)).place(x=20, y=20)
         self.btn_buscar = tk.Button(self.gui_notas, text="Buscar", font=("Arial, 14"), width=12).place(x=846, y=20)
-        self.btn_buscar = tk.Button(self.gui_notas, text="Cerrar sesión", font=("Arial, 14"), width=12).place(x=846,
+        self.btn_cerrar_sesion = tk.Button(self.gui_notas, text="Cerrar sesión", font=("Arial, 14"), width=12).place(x=846,
                                                                                                               y=700)
+        self.load_gui_crear_notas = tk.Button(self.gui_notas, text="Nueva Nota", font=("Arial, 14"), width=12,
+                                              command=self.load_gui_crear_notas).place(x=846,y=60)
+
         self.cargar_notas()
     def load_gui_crear_notas(self):
         CrearNotaGui(self.bd, self.notas, self.usuario, self.gui_notas)
