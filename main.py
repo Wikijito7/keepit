@@ -4,6 +4,7 @@ from tkinter import messagebox
 from tkinter.ttk import Treeview
 from keepit import *
 import sys
+import os
 
 
 class LoginRegisterGui:
@@ -112,13 +113,18 @@ class NotasGui:
             font_size = 12
             x, y = (328 + 160 * col, 278 + 20 * row)
 
-            self.txt_titulo = tk.Label(self.gui_notas, text=f"{nota.get_titulo()}", font=("Arial", font_size)).place(x=x, y=y + font_size)
-            self.txt_categoria = tk.Label(self.gui_notas, text=f"{nota.get_categoria()}", font=("Arial", font_size)).place(x=x, y=y + 25 + font_size)
+            self.txt_titulo = tk.Label(self.gui_notas, text=f"{nota.get_titulo()}", font=("Arial", font_size)).place(
+                x=x, y=y + font_size)
+            self.txt_categoria = tk.Label(self.gui_notas, text=f"{nota.get_categoria()}",
+                                          font=("Arial", font_size)).place(x=x, y=y + 25 + font_size)
             if len(nota.etiquetas) > 0:
-                self.txt_etiquetas = tk.Label(self.gui_notas, text=f"{nota.get_etiquetas_str()}", font=("Arial", font_size)).place(x=x, y=y + 50 + font_size)
+                self.txt_etiquetas = tk.Label(self.gui_notas, text=f"{nota.get_etiquetas_str()}",
+                                              font=("Arial", font_size)).place(x=x, y=y + 50 + font_size)
             else:
-                self.txt_etiquetas = tk.Label(self.gui_notas, text="Sin etiquetas", font=("Arial", font_size)).place(x=x, y=y + 50 + font_size)
-            self.txt_contenido = tk.Label(self.gui_notas, text=f"{nota.get_contenido()}", font=("Arial", font_size), justify="left", wraplength=120).place(x=x, y=y + 75 + font_size)
+                self.txt_etiquetas = tk.Label(self.gui_notas, text="Sin etiquetas", font=("Arial", font_size)).place(
+                    x=x, y=y + 50 + font_size)
+            self.txt_contenido = tk.Label(self.gui_notas, text=f"{nota.get_contenido()}", font=("Arial", font_size),
+                                          justify="left", wraplength=120).place(x=x, y=y + 75 + font_size)
 
     def gui_notas_load_widgets(self):
         self.cargar_notas()
@@ -147,9 +153,12 @@ class BusquedaGui:
 
 
 if __name__ == "__main__":
+    # Usuario y contraseña
+    manf = open("bd.txt")
     # Test conexion clase BaseDatos
-    bd = BaseDatos("localhost", "root", "root", "keepit")  # host, user, passw, nombre_bd
+    bd = BaseDatos("localhost", manf.readline().rstrip(), manf.readline().rstrip(), "keepit")  # host, user, passw, nombre_bd
     # Test atributo execute clase BaseDatos
+    manf.close()
     bd.cursor.execute("delete from usuario")
     bd.cursor.execute("delete from notas")
     bd.cursor.execute("delete from categorias")
@@ -171,7 +180,6 @@ if __name__ == "__main__":
     id = bd.obtain_id()
     bd.insert("Notas_has_Etiquetas", (id, 1))
 
-
     """
         insert into categorias
     values("paula"),
@@ -187,6 +195,6 @@ if __name__ == "__main__":
 
     print(bd.usuario_login("guille@test.es", "frantusmuerto"))
 
-    #LoginRegisterGui(bd)
+    # LoginRegisterGui(bd)
     usuario = bd.usuario_login("guille@test.es", "frantusmuerto")
     NotasGui(usuario, bd)
