@@ -106,7 +106,6 @@ class NotasGui:
                                         font=("Arial", 12),
                                         command=self.load_gui_crear_notas).place(x=500, y=600)
 
-
         for n in range(6):
             if n > len(self.notas) - 1:
                 break
@@ -132,8 +131,6 @@ class NotasGui:
             self.txt_contenido = tk.Label(self.gui_notas, text=f"{nota.get_contenido()}", font=("Arial", font_size),
                                           justify="left", wraplength=120).place(x=x, y=y + 75 + font_size)
 
-
-
     def gui_notas_load_widgets(self):
         self.cargar_notas()
 
@@ -147,9 +144,75 @@ class CrearNotaGui:
         self.notas = notas
         self.usuario = usuario
         self.gui_crea_notas = tk.Toplevel(gui_notas)
+        self.gui_crea_notas.title("Kipi.gay v0.1")
+        self.load_widgets_crea_nota()
 
-    def close_gui_crea_notas(self):
-        self.gui_crea_notas.withdraw()
+    def anade_nota(self):
+        titulo = self.input_titulo_nota.get()
+        categoria = self.input_categoria_nota.get()
+        etiqueta = self.input_etiqueta_nota.get()
+        contenido = self.txt_contenido.get("1.0", 'end+1c')
+        print(titulo)
+        print(categoria)
+        print(etiqueta)
+        print(contenido)
+        if titulo != "" and categoria != "" and etiqueta != "" and contenido != "":
+            try:
+                pass
+                self.bd.insert("Categorias", ) #TODO: Terminar los insert en C N R
+                """
+                 def insert(self, tabla, datos: tuple):
+                if isinstance(datos, tuple):
+                    # TODO HACK: Hacerlo de otra manera más entendible.
+                    args = ", ".join(("%s " * len(datos)).split())
+                    self.cursor.execute("insert into " + tabla + " values(" + args + ")", datos)
+                    self.conexion.commit()
+                else:
+                    raise ValueError("Debes introducir una tupla en el método insert.")  # Paula quejica tq bb
+                """
+            except:
+                self.messagebox.showwarning("Alerta", "Datos ya existen en la agenda")
+
+        else:
+            messagebox.showwarning("Alerta", "Campos vacíos")
+
+    def cancelar(self):
+        self.gui_crea_notas.withdraw()  # close login
+
+    def load_widgets_crea_nota(self):
+        # TODO Colocar beautiful una vez que funcione [self.input_email.grid(column=0, row=1, columnspan=3, padx=20)]
+        font_title = 20
+        font_n = 12
+        self.titulo_gui_notas = tk.Label(self.gui_crea_notas, text="Keepit", font=("Arial", font_title), width=30)
+        self.titulo_gui_notas.pack()
+
+        self.txt_titulo_nota = tk.Label(self.gui_crea_notas, text="Titulo", font=("Arial", font_n))
+        self.txt_titulo_nota.pack()
+        self.input_titulo_nota = tk.Entry(self.gui_crea_notas, width="40")
+        self.input_titulo_nota.pack()
+
+        self.txt_categoria_nota = tk.Label(self.gui_crea_notas, text="Categoria", font=("Arial", font_n))
+        self.txt_categoria_nota.pack()
+        self.input_categoria_nota = tk.Entry(self.gui_crea_notas, width="40")
+        self.input_categoria_nota.pack()
+
+        self.txt_etiqueta_nota = tk.Label(self.gui_crea_notas, text="Etiqueta", font=("Arial", font_n))
+        self.txt_etiqueta_nota.pack()
+        self.input_etiqueta_nota = tk.Entry(self.gui_crea_notas, width="40")
+        self.input_etiqueta_nota.pack()
+
+        self.txt_contenido_nota = tk.Label(self.gui_crea_notas, text="Contenido", font=("Arial", font_n))
+        self.txt_contenido_nota.pack()
+        self.txt_contenido = tk.Text(self.gui_crea_notas, height=10, width=40)
+        self.txt_contenido.pack()
+
+        self.btn_anade_nota = tk.Button(self.gui_crea_notas, text="añadir", width=10, height=2,
+                                        command=self.anade_nota)
+        self.btn_anade_nota.pack()
+
+        self.btn_cancelar = tk.Button(self.gui_crea_notas, text="cancelar", width="10", height="2",
+                                      command=self.cancelar)
+        self.btn_cancelar.pack()
 
 
 class ModNotasGui:
@@ -199,13 +262,8 @@ if __name__ == "__main__":
     bd.insert("Notas_has_Etiquetas", (id, 1))
 
     """
-        insert into categorias
-    values("paula"),
-        ("escocia");
-    
-    insert into notas(titulo, contenido, categoria, usuario_email)
-    values("Quejica","Eres una quejica","paula","guille@test.es"),
-        ("Lloro","hola soy un llorica Antonio", "escocia","guille@test.es");
+     self.btn_exit = tk.Button(self.gui_login, text="Exit", width="10", height="2",
+                                  command=self.exit_login)
     """
 
     #  print(bd.select("usuario"))
