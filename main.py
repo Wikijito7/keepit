@@ -8,7 +8,6 @@ import os
 
 
 class LoginRegisterGui:
-    # TODO Crear el formulario de login/register
     def __init__(self, bd):
         self.gui_login = tk.Tk()
         self.bd = bd
@@ -22,7 +21,7 @@ class LoginRegisterGui:
     def login(self):
         if self.input_email.get() != "" and self.input_passw.get() != "":
             usuario = self.bd.usuario_login(self.input_email.get(),
-                                            self.input_passw.get())  # TODO: Coger del layout los textfield y pasar los parametros
+                                            self.input_passw.get())
             if usuario is None:
                 messagebox.showwarning("Error", "Error de credenciales")
             else:
@@ -32,7 +31,7 @@ class LoginRegisterGui:
     def register(self):
         if self.input_email.get() != "" and self.input_passw.get() != "":
             usuario = self.bd.usuario_login(self.input_email.get(),
-                                            self.input_passw.get())  # TODO: Coger del layout los textfield y pasar los parametros
+                                            self.input_passw.get())
             if usuario is None:
                 bd.insert("usuario", (self.input_email.get(), self.input_passw.get()))
                 self.login()
@@ -74,7 +73,6 @@ class LoginRegisterGui:
 
 # .tq bb yo tambien :) shh
 class NotasGui:
-    # TODO Crear el formulario de las notas
     def __init__(self, usuario, bd):
         self.gui_notas = tk.Tk()
         self.bd = bd
@@ -101,38 +99,42 @@ class NotasGui:
 
     def cargar_notas(self):
         for n in range(6):
-            if n > len(self.notas)-1:
+            if n > len(self.notas):
                 break
 
-            nota = self.notas[n]
+            nota = self.notas[n-1]
             m = 3
-            font_size = 12
+            font_size = 10
             col = n % m
             row = 2 * m * (n // m)
-
-            x, y = (308 + 185 * col, 238 + 30 * row)
             canvas = tk.Canvas(self.gui_notas)
-            self.txt_titulo = tk.Label(self.gui_notas, text=nota.get_titulo(), wraplength=130,
-                                       font=("Arial", font_size, "bold"), justify="center").place(x=x, y=y)
-            self.btn_vereditar = tk.Button(self.gui_notas, text="Ver/Editar", width=12,
-                                           font=("Arial", font_size)).place(x=x, y=y + 50)
-            self.btn_eliminar = tk.Button(self.gui_notas, text="Eliminar", width=12, font=("Arial", font_size)).place(
-                x=x, y=y + 90)
+            x, y = (298 + 185 * col, 228 + 32 * row)
 
-            canvas.create_rectangle(20, 20, 180, 170, outline="#000", width=2)
+            if n == 0:
+                tk.Button(self.gui_notas, text="+", font=("Arial", 33, "bold"), width=5, height=2,
+                          borderwidth=1, command=self.load_gui_crear_notas).place(x=x - 12, y=y)
+            else:
+                tk.Label(self.gui_notas, text=nota.get_titulo(), wraplength=130, font=("Arial", font_size, "bold"),
+                         justify="center").place(x=x, y=y)
+                tk.Button(self.gui_notas, text="Ver/Editar", width=14, font=("Arial", font_size)).place(x=x, y=y + 80)
+                tk.Button(self.gui_notas, text="Eliminar", width=14, font=("Arial", font_size)).place(x=x, y=y + 110)
+
+            canvas.create_rectangle(20, 20, 180, 180, outline="#000", width=2)
             canvas.place(x=x - 40, y=y - 30)
 
     def gui_notas_load_widgets(self):
         self.titulo = tk.Label(self.gui_notas, text="Keepit", font=("Arial", 20)).place(x=20, y=20)
-        self.btn_buscar = tk.Button(self.gui_notas, text="Buscar", font=("Arial, 14"), width=12).place(x=846, y=20)
-        self.btn_cerrar_sesion = tk.Button(self.gui_notas, text="Cerrar sesión", font=("Arial, 14"), width=12).place(x=846,
-                                                                                                              y=700)
-        self.load_gui_crear_notas = tk.Button(self.gui_notas, text="Nueva Nota", font=("Arial, 14"), width=12,
-                                              command=self.load_gui_crear_notas).place(x=846,y=60)
-
+        self.btn_buscar = tk.Button(self.gui_notas, text="Buscar", font=("Arial", 14), width=12).place(x=846, y=20)
+        self.btn_cerrar_sesion = tk.Button(self.gui_notas, text="Cerrar sesión", font=("Arial", 14),
+                                           width=12, command=self.cerrar_sesion).place(x=846, y=700)
         self.cargar_notas()
+
     def load_gui_crear_notas(self):
         CrearNotaGui(self.bd, self.notas, self.usuario, self.gui_notas)
+
+    def cerrar_sesion(self):
+        self.gui_notas.withdraw()
+        LoginRegisterGui(bd)
 
 
 class CrearNotaGui:
@@ -222,8 +224,8 @@ class BusquedaGui:
     pass
 
 
-# Crear el formulario de login/register
-# Crear el formulario de las notas
+# Crear el formulario de login/register DONE
+# Crear el formulario de las notas DONE
 # Crear el formulario de añadir una nueva nota
 # Crear el formulario de modificar la nota
 # Crear el formulario de busqueda
