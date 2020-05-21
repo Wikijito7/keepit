@@ -102,7 +102,7 @@ class NotasGui:
             if n > len(self.notas):
                 break
 
-            nota = self.notas[n-1]
+            nota = self.notas[n - 1]
             m = 3
             font_size = 10
             col = n % m
@@ -147,6 +147,10 @@ class CrearNotaGui:
         self.load_widgets_crea_nota()
 
     def anade_nota(self):
+        """
+        Una nota puede no tener etiquetas o categorias
+
+        """
         titulo = self.input_titulo_nota.get()
         categoria = self.input_categoria_nota.get()
         etiqueta = self.input_etiqueta_nota.get()
@@ -155,25 +159,22 @@ class CrearNotaGui:
         print(categoria)
         print(etiqueta)
         print(contenido)
-        if titulo != "" and categoria != "" and etiqueta != "" and contenido != "":
-            try:
-                pass
-                self.bd.insert("Categorias", ) #TODO: Terminar los insert en C N R
-                """
-                 def insert(self, tabla, datos: tuple):
-                if isinstance(datos, tuple):
-                    # TODO HACK: Hacerlo de otra manera más entendible.
-                    args = ", ".join(("%s " * len(datos)).split())
-                    self.cursor.execute("insert into " + tabla + " values(" + args + ")", datos)
-                    self.conexion.commit()
-                else:
-                    raise ValueError("Debes introducir una tupla en el método insert.")  # Paula quejica tq bb
-                """
-            except:
-                self.messagebox.showwarning("Alerta", "Datos ya existen en la agenda")
+        if titulo != "" and categoria != "":
+            # inserta sin etiqueta
+            if etiqueta == "":
+                if self.bd.check_exist(("Notas", categoria)):
+                    self.bd.insert("Notas", (None, titulo, contenido, categoria, self.usuario.email))
+                    print(self.bd.select("Notas"))
+                    pass  # obtiene el id de etiqueta inserta etiqueta inserta nota inserta etiqueta_nota
+                messagebox.showwarning("Alerta", "La categoría no existe")
 
+            # inserta con la etiqueta
+            else:
+                if self.bd.check_exist("Etiquetas", etiqueta) and self.bd.check_exists(("Categorias", categoria)):
+                    pass  # inserta lo anterior
+                messagebox.showwarning("La etiqueta o la categoría no existen")
         else:
-            messagebox.showwarning("Alerta", "Campos vacíos")
+            messagebox.showwarning("Alerta", "Titulo y categoría, deben estar rellenos")
 
     def cancelar(self):
         self.gui_crea_notas.withdraw()  # close login
@@ -267,6 +268,7 @@ if __name__ == "__main__":
 
     #  print(bd.select("usuario"))
     print(bd.select_filtrado("usuario", ("email", "test@")))
+    print(bd.select("Categorias"))
 
     print(bd.usuario_login("guille@test.es", "frantusmuerto"))
 

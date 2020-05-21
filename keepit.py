@@ -75,6 +75,21 @@ class BaseDatos:
         self.cursor.execute("select max(id_notas) from Notas")
         return self.cursor.fetchall()[0][0]
 
+    def check_exist(self, param):
+        """
+        check if param[1] in param[0]
+        :param param {tuple}: param[0] = table param[1] == param
+        :return {bool}: True if param[1] in param[0], False if not param[1] not in param[0]
+        """
+        if isinstance(param, tuple):
+            self.cursor.execute("select * from " + param[0])
+            for tupla in self.cursor.fetchall():
+                if param[1] in tupla:
+                    return True
+            return False
+
+
+
 
 class Nota:
     def __init__(self, titulo, contenido, categoria, usuario, identificador, etiquetas=None):
@@ -147,7 +162,7 @@ class Usuario:
 
 if __name__ == "__main__":
     # Test conexion clase BaseDatos
-    bd = BaseDatos("localhost", "root", "Antoniojose@10", "keepit")  # host, user, passw, nombre_bd
+    bd = BaseDatos("localhost", "pepito", "grillo", "keepit")  # host, user, passw, nombre_bd
 
     # Test atributo execute clase BaseDatos
     bd.cursor.execute("select * from Categorias")
@@ -164,3 +179,8 @@ if __name__ == "__main__":
     print(bd.select_filtrado("usuario", ("email", "test@")))
 
     print(bd.usuario_login("guille@test.es", "frantusmuerto"))
+    # asert bd.check_exists
+    if bd.check_exist(("usuario","paulaquejica")):
+        print("true")
+    else:
+        print("false")
