@@ -161,8 +161,9 @@ class CrearNotaGui:
             if etiqueta == "":
                 if self.bd.check_exist(("Categorias", categoria)):
                     self.bd.insert("Notas", (None, titulo, contenido, categoria, self.usuario.email))
-                    messagebox.showinfo("Info", "Se ha agregado la nota " + titulo + " asociada a la categoria " + categoria )
-                    print(bd.select("Notas")) # check method
+                    messagebox.showinfo("Info",
+                                        "Se ha agregado la nota " + titulo + " asociada a la categoria " + categoria)
+                    print(bd.select("Notas"))  # check method
                     self.gui_crea_notas.withdraw()
                 else:
                     messagebox.showwarning("Alerta", "La categoría no existe")
@@ -180,6 +181,9 @@ class CrearNotaGui:
         else:
             messagebox.showwarning("Alerta", "Titulo y categoría, deben estar rellenos")
 
+    def gestion_etiquetas(self):
+        pass
+
     def cancelar(self):
         self.gui_crea_notas.withdraw()  # close login
 
@@ -188,35 +192,39 @@ class CrearNotaGui:
         font_title = 20
         font_n = 12
         self.titulo_gui_notas = tk.Label(self.gui_crea_notas, text="Keepit", font=("Arial", font_title), width=30)
-        self.titulo_gui_notas.pack()
+        self.titulo_gui_notas.grid(column=0, row=0, columnspan=3, pady=20)
 
         self.txt_titulo_nota = tk.Label(self.gui_crea_notas, text="Titulo", font=("Arial", font_n))
-        self.txt_titulo_nota.pack()
+        self.txt_titulo_nota.grid(column=0, row=1, columnspan=3, pady=(10, 5), padx=20)
         self.input_titulo_nota = tk.Entry(self.gui_crea_notas, width="40")
-        self.input_titulo_nota.pack()
+        self.input_titulo_nota.grid(column=0, row=2, columnspan=3, padx=20)
 
         self.txt_categoria_nota = tk.Label(self.gui_crea_notas, text="Categoria", font=("Arial", font_n))
-        self.txt_categoria_nota.pack()
+        self.txt_categoria_nota.grid(column=0, row=3, columnspan=3, pady=(10, 5), padx=20)
         self.input_categoria_nota = tk.Entry(self.gui_crea_notas, width="40")
-        self.input_categoria_nota.pack()
+        self.input_categoria_nota.grid(column=0, row=4, columnspan=3, padx=20)
 
         self.txt_etiqueta_nota = tk.Label(self.gui_crea_notas, text="Etiqueta", font=("Arial", font_n))
-        self.txt_etiqueta_nota.pack()
+        self.txt_etiqueta_nota.grid(column=0, row=5, columnspan=3, pady=(10, 5), padx=20)
         self.input_etiqueta_nota = tk.Entry(self.gui_crea_notas, width="40")
-        self.input_etiqueta_nota.pack()
+        self.input_etiqueta_nota.grid(column=0, row=6, columnspan=3, padx=20)
 
         self.txt_contenido_nota = tk.Label(self.gui_crea_notas, text="Contenido", font=("Arial", font_n))
-        self.txt_contenido_nota.pack()
-        self.txt_contenido = tk.Text(self.gui_crea_notas, height=10, width=40)
-        self.txt_contenido.pack()
+        self.txt_contenido_nota.grid(column=0, row=7, columnspan=3, pady=(10, 5), padx=20)
+        self.txt_contenido = tk.Text(self.gui_crea_notas, height=10, width=52)
+        self.txt_contenido.grid(column=0, row=8, columnspan=3, padx=20)
 
         self.btn_anade_nota = tk.Button(self.gui_crea_notas, text="añadir", width=10, height=2,
                                         command=self.anade_nota)
-        self.btn_anade_nota.pack()
+        self.btn_anade_nota.grid(column=0, row=9, pady=20, padx=10)
 
         self.btn_cancelar = tk.Button(self.gui_crea_notas, text="cancelar", width="10", height="2",
                                       command=self.cancelar)
-        self.btn_cancelar.pack()
+        self.btn_cancelar.grid(column=1, row=9, pady=20, padx=10)
+
+        self.btn_etiquetas = tk.Button(self.gui_crea_notas, text="Etiquetas", width="10", height="2",
+                                       command=self.gestion_etiquetas)
+        self.btn_etiquetas.grid(column=2, row=9, pady=20, padx=10)
 
 
 class ModNotasGui:
@@ -261,7 +269,6 @@ if __name__ == "__main__":
     bd.insert("notas", (None, "Lloro", "hola soy un llorica Davileño", "paula", "guille@test.es"))
 
     bd.insert("etiquetas", ("quejas", 1))
-
 
     id = bd.obtain_id_notas()
     bd.insert("Notas_has_Etiquetas", (id, 1))
