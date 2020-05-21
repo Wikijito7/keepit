@@ -181,11 +181,38 @@ class CrearNotaGui:
         else:
             messagebox.showwarning("Alerta", "Titulo y categoría, deben estar rellenos")
 
-    def gestion_etiquetas(self):
-        pass
-
     def cancelar(self):
         self.gui_crea_notas.withdraw()  # close login
+
+    def gestion_etiquetas(self):
+        self.sec_gui_etiquetas = tk.Toplevel(self.gui_crea_notas)
+        self.sec_gui_etiquetas.title("Kipi.gay v0.1")
+        self.load_widgets_etiquetas()
+        self.sec_gui_etiquetas.mainloop()
+
+    def load_etiquetas_view(self):
+        self.consulta_rel = ttk.Treeview(self.sec_gui_etiquetas, columns="Etiqueta")
+        self.consulta_rel.heading("#0", text="Nota")
+        self.consulta_rel.heading("Etiqueta", text="Etiqueta")
+        self.consulta_rel.grid(column=0, row=1, columnspan=3, pady=10)
+        self.vsb_rel = ttk.Scrollbar(self.sec_gui_etiquetas, orient="vertical", command=self.consulta_rel.yview)
+        self.vsb_rel.grid(column=2, row=1, sticky="nse")
+
+    def load_data_etiquetas_view(self):
+        # TODO Cargar datos
+        pass
+
+    def anade_etiqueta(self):
+        # TODO Carga nueva etiqueta
+        pass
+
+    def elimina_eti(self):
+        #TODO Elimina etiqueta si no se elecciona nada en el treeview se muestra mensaje de error
+        # preguntar si eliminar antes
+        pass
+
+    def close_sec_gui_etiquetas(self):
+        self.sec_gui_etiquetas.withdraw()
 
     def load_widgets_crea_nota(self):
         # TODO Colocar beautiful una vez que funcione [self.input_email.grid(column=0, row=1, columnspan=3, padx=20)]
@@ -225,6 +252,27 @@ class CrearNotaGui:
         self.btn_etiquetas = tk.Button(self.gui_crea_notas, text="Etiquetas", width="10", height="2",
                                        command=self.gestion_etiquetas)
         self.btn_etiquetas.grid(column=2, row=9, pady=20, padx=10)
+
+    def load_widgets_etiquetas(self):
+        font_title = 20
+        self.title_etiquetas = tk.Label(self.sec_gui_etiquetas, text="GESTOR DE ETIQUETAS", font=("Arial", font_title),
+                                        width=30)
+        self.title_etiquetas.grid(column=0, row=0, columnspan=3, pady=(10, 15))
+
+        self.load_etiquetas_view()  # load a treeview with relationships
+        self.load_data_etiquetas_view()
+
+        self.btn_crea_eti = tk.Button(self.sec_gui_etiquetas, text="Nueva", width="10", height="2",
+                                      command=self.anade_etiqueta)
+        self.btn_crea_eti.grid(column=0, row=2, pady=(5, 10), padx=10)
+
+        self.btn_elimina_eti = tk.Button(self.sec_gui_etiquetas, text="Elimina", width="10", height="2",
+                                         command=self.elimina_eti)
+        self.btn_elimina_eti.grid(column=1, row=2, pady=(5, 10), padx=10)
+
+        self.btn_close_eti = tk.Button(self.sec_gui_etiquetas, text="Cerrar", width="10", height="2",
+                                       command=self.close_sec_gui_etiquetas)
+        self.btn_close_eti.grid(column=2, row=2, pady=(5, 10), padx=10)
 
 
 class ModNotasGui:
