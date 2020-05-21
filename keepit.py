@@ -67,12 +67,20 @@ class BaseDatos:
         else:
             raise ValueError("Debes introducir una tupla en el método insert.")  # Paula quejica tq bb
 
-    def obtain_id(self):
+    def obtain_id_notas(self):
         """
         execute a select to search id
         :return {int}: return last id_nota
         """
         self.cursor.execute("select max(id_notas) from Notas")
+        return self.cursor.fetchall()[0][0]
+
+    def obtain_id_etiquetas(self):
+        """
+        execute a select to search id
+        :return {int}: return last id_etiquetas
+        """
+        self.cursor.execute("select max(id_etiquetas) from Etiquetas")
         return self.cursor.fetchall()[0][0]
 
     def check_exist(self, param):

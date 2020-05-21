@@ -147,10 +147,7 @@ class CrearNotaGui:
         self.load_widgets_crea_nota()
 
     def anade_nota(self):
-        """
-        Una nota puede no tener etiquetas o categorias
-
-        """
+        # TODO: Agregar nueva nota a gui_notas
         titulo = self.input_titulo_nota.get()
         categoria = self.input_categoria_nota.get()
         etiqueta = self.input_etiqueta_nota.get()
@@ -162,17 +159,24 @@ class CrearNotaGui:
         if titulo != "" and categoria != "":
             # inserta sin etiqueta
             if etiqueta == "":
-                if self.bd.check_exist(("Notas", categoria)):
+                if self.bd.check_exist(("Categorias", categoria)):
                     self.bd.insert("Notas", (None, titulo, contenido, categoria, self.usuario.email))
-                    print(self.bd.select("Notas"))
-                    pass  # obtiene el id de etiqueta inserta etiqueta inserta nota inserta etiqueta_nota
-                messagebox.showwarning("Alerta", "La categoría no existe")
+                    messagebox.showinfo("Info", "Se ha agregado la nota " + titulo + " asociada a la categoria " + categoria )
+                    print(bd.select("Notas")) # check method
+                    self.gui_crea_notas.withdraw()
+                else:
+                    messagebox.showwarning("Alerta", "La categoría no existe")
 
             # inserta con la etiqueta
             else:
-                if self.bd.check_exist("Etiquetas", etiqueta) and self.bd.check_exists(("Categorias", categoria)):
-                    pass  # inserta lo anterior
-                messagebox.showwarning("La etiqueta o la categoría no existen")
+                if self.bd.check_exist(("Etiquetas", etiqueta)) and self.bd.check_exist(("Categorias", categoria)):
+                    self.bd.insert("Notas", (None, titulo, contenido, categoria, self.usuario.email))
+                    self.bd.insert("Notas_has_Etiquetas", ((self.bd.obtain_id_notas()), self.bd.obtain_id_etiquetas()))
+                    print(bd.select("Notas"))  # check method
+                    print(bd.select("Etiquetas"))  # check method
+                    self.gui_crea_notas.withdraw()
+                else:
+                    messagebox.showwarning("La etiqueta o la categoría no existen")
         else:
             messagebox.showwarning("Alerta", "Titulo y categoría, deben estar rellenos")
 
@@ -254,11 +258,12 @@ if __name__ == "__main__":
     bd.insert("categorias", ("escocia",))
 
     bd.insert("notas", (None, "Quejica", "Eres una quejica", "paula", "guille@test.es"))
-    bd.insert("notas", (None, "Lloro", "hola soy un llorica Davileño", "escocia", "guille@test.es"))
+    bd.insert("notas", (None, "Lloro", "hola soy un llorica Davileño", "paula", "guille@test.es"))
 
     bd.insert("etiquetas", ("quejas", 1))
 
-    id = bd.obtain_id()
+
+    id = bd.obtain_id_notas()
     bd.insert("Notas_has_Etiquetas", (id, 1))
 
     """
@@ -275,3 +280,7 @@ if __name__ == "__main__":
     # LoginRegisterGui(bd)
     usuario = bd.usuario_login("guille@test.es", "frantusmuerto")
     NotasGui(usuario, bd)
+    if bd.check_exist(("Categorias", "paula")):
+        print(True)
+    else:
+        print(False)
