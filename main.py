@@ -14,6 +14,7 @@ class LoginRegisterGui:
         self.conexion = bd.conexion
 
         # Cargar componentes y demases del programa.
+        self.gui_login.resizable(0, 0)
         self.gui_login.title("Kipi.gay v0.1")  # Paula quejica
         self.load_widgets_login()
         self.gui_login.mainloop()
@@ -77,7 +78,11 @@ class NotasGui:
         self.gui_notas = tk.Tk()
         self.bd = bd
         self.usuario = usuario
-        self.notas = []
+        self.notas = [Nota("m"*45 + str(n), "", "", self.usuario, n) for n in range(30)]
+        self.rango_notas = 0
+
+        # Cargamos la interfaz.
+        self.gui_notas.resizable(0, 0)
         self.gui_notas.geometry("1024x768")
         self.gui_notas.title("Kipi.gay v0.1")
         self.obtener_notas()
@@ -94,32 +99,33 @@ class NotasGui:
                 etiqueta = self.bd.select_filtrado("etiquetas", ("id_etiquetas", etiqueta_id[1]))
                 etiquetas.append(etiqueta[0][0])
             self.notas.append(Nota(nota[1], nota[2], nota[3], self.usuario, nota[0], etiquetas))
-        for nota in self.notas:
-            print(nota)
 
     def cargar_notas(self):
         for n in range(6):
-            if n > len(self.notas):
-                break
-
-            nota = self.notas[n - 1]
             m = 3
             font_size = 10
             col = n % m
             row = 2 * m * (n // m)
             canvas = tk.Canvas(self.gui_notas)
-            x, y = (298 + 185 * col, 228 + 32 * row)
+            x, y = (202 + 220 * col, 228 + 32 * row)
 
-            if n == 0:
-                tk.Button(self.gui_notas, text="+", font=("Arial", 33, "bold"), width=5, height=2,
-                          borderwidth=1, command=self.load_gui_crear_notas).place(x=x - 12, y=y)
-            else:
-                tk.Label(self.gui_notas, text=nota.get_titulo(), wraplength=130, font=("Arial", font_size, "bold"),
-                         justify="center").place(x=x, y=y)
-                tk.Button(self.gui_notas, text="Ver/Editar", width=14, font=("Arial", font_size)).place(x=x, y=y + 80)
-                tk.Button(self.gui_notas, text="Eliminar", width=14, font=("Arial", font_size)).place(x=x, y=y + 110)
+            try:
+                nota = self.notas[self.rango_notas + n - 1]
 
-            canvas.create_rectangle(20, 20, 180, 180, outline="#000", width=2)
+                if n == 0:
+                    tk.Button(self.gui_notas, text="+", font=("Arial", 33, "bold"), width=6, height=2,
+                              borderwidth=1, command=self.load_gui_crear_notas).place(x=x - 10, y=y + 5)
+                else:
+                    tk.Label(self.gui_notas, text=nota.get_titulo(), wraplength=150, font=("Arial", font_size, "bold"),
+                             justify="center").place(x=x, y=y)
+                    tk.Button(self.gui_notas, text="Ver/Editar", width=17, font=("Arial", font_size)).place(x=x,
+                                                                                                            y=y + 80)
+                    tk.Button(self.gui_notas, text="Eliminar", width=17, font=("Arial", font_size)).place(x=x,
+                                                                                                          y=y + 110)
+                canvas.create_rectangle(20, 20, 210, 190, outline="#000", width=2)
+            except IndexError:
+                canvas.create_rectangle(20, 20, 210, 190, width=0)
+                self.next_page.place(x=1024)
             canvas.place(x=x - 40, y=y - 30)
 
     def gui_notas_load_widgets(self):
@@ -127,6 +133,15 @@ class NotasGui:
         self.btn_buscar = tk.Button(self.gui_notas, text="Buscar", font=("Arial", 14), width=12).place(x=846, y=20)
         self.btn_cerrar_sesion = tk.Button(self.gui_notas, text="Cerrar sesión", font=("Arial", 14),
                                            width=12, command=self.cerrar_sesion).place(x=846, y=700)
+        self.next_page = tk.Button(self.gui_notas, text="Siguiente", font=("Arial, 14"), width=10,
+                                   command=self.pagina_siguiente)
+        self.next_page.place(x=20, y=222)
+
+        self.previous_page = tk.Button(self.gui_notas, text="Anterior", font=("Arial, 14"), width=10,
+                                       command=self.pagina_anterior)
+
+        self.previous_page.place(x=1024, y=532)
+
         self.cargar_notas()
 
     def load_gui_crear_notas(self):
@@ -136,26 +151,41 @@ class NotasGui:
         self.gui_notas.withdraw()
         LoginRegisterGui(bd)
 
+    def pagina_siguiente(self):
+        if self.rango_notas + 6 <= len(self.notas):
+            self.rango_notas += 6
+            self.previous_page.place(x=20)
+            self.cargar_notas()
+            print(self.rango_notas, self.rango_notas + 6, len(self.notas))
+
+    def pagina_anterior(self):
+        if self.rango_notas - 6 >= 0:
+            self.rango_notas -= 6
+            self.cargar_notas()
+            self.next_page.place(x=20)
+
+        if self.rango_notas == 0:
+            self.previous_page.place(x=1024)
+
 
 class CrearNotaGui:
     def __init__(self, bd, notas, usuario, gui_notas):
         self.bd = bd
         self.notas = notas
         self.usuario = usuario
+
+        # Cargamos la interfaz.
         self.gui_crea_notas = tk.Toplevel(gui_notas)
+        self.gui_crea_notas.resizable(0, 0)
         self.gui_crea_notas.title("Kipi.gay v0.1")
         self.load_widgets_crea_nota()
 
     def anade_nota(self):
-        # TODO: Agregar nueva nota a gui_notas
+        # TODO: Rehacer todo el método para hacerlo funcionar acorde al programa real.
         titulo = self.input_titulo_nota.get()
         categoria = self.input_categoria_nota.get()
         etiqueta = self.input_etiqueta_nota.get()
         contenido = self.txt_contenido.get("1.0", 'end+1c')
-        print(titulo)
-        print(categoria)
-        print(etiqueta)
-        print(contenido)
         if titulo != "" and categoria != "":
             # inserta sin etiqueta
             if etiqueta == "":
@@ -182,37 +212,7 @@ class CrearNotaGui:
             messagebox.showwarning("Alerta", "Titulo y categoría, deben estar rellenos")
 
     def cancelar(self):
-        self.gui_crea_notas.withdraw()  # close login
-
-    def gestion_etiquetas(self):
-        self.sec_gui_etiquetas = tk.Toplevel(self.gui_crea_notas)
-        self.sec_gui_etiquetas.title("Kipi.gay v0.1")
-        self.load_widgets_etiquetas()
-        self.sec_gui_etiquetas.mainloop()
-
-    def load_etiquetas_view(self):
-        self.consulta_rel = ttk.Treeview(self.sec_gui_etiquetas, columns="Etiqueta")
-        self.consulta_rel.heading("#0", text="Nota")
-        self.consulta_rel.heading("Etiqueta", text="Etiqueta")
-        self.consulta_rel.grid(column=0, row=1, columnspan=3, pady=10)
-        self.vsb_rel = ttk.Scrollbar(self.sec_gui_etiquetas, orient="vertical", command=self.consulta_rel.yview)
-        self.vsb_rel.grid(column=2, row=1, sticky="nse")
-
-    def load_data_etiquetas_view(self):
-        # TODO Cargar datos
-        pass
-
-    def anade_etiqueta(self):
-        # TODO Carga nueva etiqueta
-        pass
-
-    def elimina_eti(self):
-        #TODO Elimina etiqueta si no se elecciona nada en el treeview se muestra mensaje de error
-        # preguntar si eliminar antes
-        pass
-
-    def close_sec_gui_etiquetas(self):
-        self.sec_gui_etiquetas.withdraw()
+        self.gui_crea_notas.withdraw()
 
     def load_widgets_crea_nota(self):
         # TODO Colocar beautiful una vez que funcione [self.input_email.grid(column=0, row=1, columnspan=3, padx=20)]
@@ -241,38 +241,13 @@ class CrearNotaGui:
         self.txt_contenido = tk.Text(self.gui_crea_notas, height=10, width=52)
         self.txt_contenido.grid(column=0, row=8, columnspan=3, padx=20)
 
-        self.btn_anade_nota = tk.Button(self.gui_crea_notas, text="añadir", width=10, height=2,
+        self.btn_anade_nota = tk.Button(self.gui_crea_notas, text="Añadir", width=14, height=2, font=("Arial", 11),
                                         command=self.anade_nota)
-        self.btn_anade_nota.grid(column=0, row=9, pady=20, padx=10)
+        self.btn_anade_nota.grid(column=0, row=9, pady=20)
 
-        self.btn_cancelar = tk.Button(self.gui_crea_notas, text="cancelar", width="10", height="2",
+        self.btn_cancelar = tk.Button(self.gui_crea_notas, text="Cancelar", width=14, height=2, font=("Arial", 11),
                                       command=self.cancelar)
-        self.btn_cancelar.grid(column=1, row=9, pady=20, padx=10)
-
-        self.btn_etiquetas = tk.Button(self.gui_crea_notas, text="Etiquetas", width="10", height="2",
-                                       command=self.gestion_etiquetas)
-        self.btn_etiquetas.grid(column=2, row=9, pady=20, padx=10)
-
-    def load_widgets_etiquetas(self):
-        font_title = 20
-        self.title_etiquetas = tk.Label(self.sec_gui_etiquetas, text="GESTOR DE ETIQUETAS", font=("Arial", font_title),
-                                        width=30)
-        self.title_etiquetas.grid(column=0, row=0, columnspan=3, pady=(10, 15))
-
-        self.load_etiquetas_view()  # load a treeview with relationships
-        self.load_data_etiquetas_view()
-
-        self.btn_crea_eti = tk.Button(self.sec_gui_etiquetas, text="Nueva", width="10", height="2",
-                                      command=self.anade_etiqueta)
-        self.btn_crea_eti.grid(column=0, row=2, pady=(5, 10), padx=10)
-
-        self.btn_elimina_eti = tk.Button(self.sec_gui_etiquetas, text="Elimina", width="10", height="2",
-                                         command=self.elimina_eti)
-        self.btn_elimina_eti.grid(column=1, row=2, pady=(5, 10), padx=10)
-
-        self.btn_close_eti = tk.Button(self.sec_gui_etiquetas, text="Cerrar", width="10", height="2",
-                                       command=self.close_sec_gui_etiquetas)
-        self.btn_close_eti.grid(column=2, row=2, pady=(5, 10), padx=10)
+        self.btn_cancelar.grid(column=2, row=9, pady=20)
 
 
 class ModNotasGui:
