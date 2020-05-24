@@ -200,14 +200,23 @@ class CrearNotaGui:
         contenido = self.txt_contenido.get("1.0", 'end+1c')
         if titulo != "" and categoria != "":
             # inserta sin etiqueta
-            self.bd.insert("Categorias", (categoria,))
-            self.bd.insert("Notas", (None, titulo, contenido, categoria, self.usuario.email))
+            if not self.bd.exists_categoria(categoria):
+                self.bd.insert("Categorias", (categoria,))
+
             if etiqueta != "":
                 etiquetas = etiqueta.split(",")
-                for etiqueta in etiquetas:
-                    if self.bd.obtain_id_etiquetas(etiqueta) is None:
-                        self.bd.insert("etiquetas", (etiqueta, None))
-                    self.bd.insert("Notas_has_Etiquetas", ((self.bd.obtain_id_notas()), self.bd.obtain_id_etiquetas(etiqueta)))
+            else:
+                etiquetas = []
+
+            if not self.bd.exist_nota(titulo):
+                self.bd.insert("Notas", (None, titulo, contenido, categoria, self.usuario.email))
+            else:
+                self.bd.update_nota(Nota(titulo, contenido, categoria, self.nota.usuario, self.nota.identificador, etiquetas))
+
+            for etiqueta in etiquetas:
+                if self.bd.obtain_id_etiquetas(etiqueta) is None:
+                    self.bd.insert("etiquetas", (etiqueta, None))
+                self.bd.insert("Notas_has_Etiquetas", ((self.bd.obtain_id_notas()), self.bd.obtain_id_etiquetas(etiqueta)))
 
                 print(bd.select("Notas"))  # check method
                 print(bd.select("Etiquetas"))  # check method
