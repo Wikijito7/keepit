@@ -58,6 +58,10 @@ class BaseDatos:
             # TODO añadir warning
             raise ValueError("Debes introducir una tupla en el método update.")
 
+    def update_nota(self, nota):
+        self.cursor.execute("update notas set titulo = %s, contenido = %s, categoria = %s where id_notas = %s",
+                            (nota.get_titulo(), nota.get_contenido(), nota.get_categoria(), str(nota.identificador)))
+
     def insert(self, tabla, datos: tuple):
         if isinstance(datos, tuple):
             # TODO HACK: Hacerlo de otra manera más entendible.
@@ -86,16 +90,17 @@ class BaseDatos:
         except IndexError:
             return None
 
-    def obtain_id_categoria(self, categoria):
-        """
-        execute a select to search a category
-        :return {int}: return last id_etiquetas
-        """
-        self.cursor.execute("select id_etiquetas from Etiquetas where nombre like %s", categoria)
-        try:
-            return self.cursor.fetchall()[0][0]
-        except IndexError:
-            return None
+    def exists_categoria(self, categoria):
+        self.cursor.execute("select nombre from categorias where nombre like %s", categoria)
+        if self.cursor.rowcount > 0:
+            return True
+        return False
+
+    def exist_nota(self, titulo):
+        self.cursor.execute("select * from notas where titulo like %s", titulo)
+        if self.cursor.rowcount > 0:
+            return True
+        return False
 
 
 class Nota:
@@ -149,6 +154,9 @@ class Nota:
 
     def set_contenido(self, contenido):
         self.contenido = contenido
+
+    def get_as_list(self):
+        return [self.identificador, self.titulo, self.categoria, self.usuario.get_email()]
 
     def __str__(self):
         return f"Nota(titulo: '{self.titulo}', categoría: '{self.categoria}', contenido: '{self.contenido}', usuario: '{self.usuario}', identificador: '{self.identificador}', etiquetas: '{self.etiquetas}')"
