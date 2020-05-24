@@ -75,28 +75,27 @@ class BaseDatos:
         self.cursor.execute("select max(id_notas) from Notas")
         return self.cursor.fetchall()[0][0]
 
-    def obtain_id_etiquetas(self):
+    def obtain_id_etiquetas(self, etiqueta):
         """
         execute a select to search id
         :return {int}: return last id_etiquetas
         """
-        self.cursor.execute("select max(id_etiquetas) from Etiquetas")
-        return self.cursor.fetchall()[0][0]
+        self.cursor.execute("select id_etiquetas from Etiquetas where nombre like %s", etiqueta)
+        try:
+            return self.cursor.fetchall()[0][0]
+        except IndexError:
+            return None
 
-    def check_exist(self, param):
+    def obtain_id_categoria(self, categoria):
         """
-        check if param[1] in param[0]
-        :param param {tuple}: param[0] = table param[1] == param
-        :return {bool}: True if param[1] in param[0], False if not param[1] not in param[0]
+        execute a select to search a category
+        :return {int}: return last id_etiquetas
         """
-        if isinstance(param, tuple):
-            self.cursor.execute("select * from " + param[0])
-            for tupla in self.cursor.fetchall():
-                if param[1] in tupla:
-                    return True
-            return False
-
-
+        self.cursor.execute("select id_etiquetas from Etiquetas where nombre like %s", categoria)
+        try:
+            return self.cursor.fetchall()[0][0]
+        except IndexError:
+            return None
 
 
 class Nota:
@@ -188,7 +187,7 @@ if __name__ == "__main__":
 
     print(bd.usuario_login("guille@test.es", "frantusmuerto"))
     # asert bd.check_exists
-    if bd.check_exist(("usuario","paulaquejica")):
+    if bd.check_exist(("usuario", "paulaquejica")):
         print("true")
     else:
         print("false")
