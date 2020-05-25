@@ -121,7 +121,7 @@ class NotasGui:
                                                      command=lambda i=nota: self.load_gui_crear_notas(i))
                     self.boton_vereditar.place(x=x, y=y + 80)
                     self.eliminar = tk.Button(self.gui_notas, text="Eliminar", width=17, font=("Arial", font_size),
-                                              command=lambda i=nota: self.eliminar_nota(nota.identificador))
+                                              command=lambda i=nota: self.eliminar_nota(i.identificador))
                     self.eliminar.place(x=x, y=y + 110)
                 canvas.create_rectangle(20, 20, 210, 190, outline="#000", width=2)
             except IndexError:
@@ -177,6 +177,7 @@ class NotasGui:
         self.bd.delete_nota(id)
         self.recargar_notas()
 
+
 class CrearNotaGui:
     def __init__(self, bd, usuario, gui_notas, interf_principal, nota=None):
         self.bd = bd
@@ -220,6 +221,7 @@ class CrearNotaGui:
                 messagebox.showwarning("Alerta", "Esa etiqueta ya existe. Prueba a darle a Ver/Editar.)")
 
             for etiqueta in etiquetas:
+                etiqueta = etiqueta.lstrip(" ")
                 if self.bd.obtain_id_etiquetas(etiqueta) is None:
                     self.bd.insert("etiquetas", (etiqueta, None))
                 if not self.edit_mode:
