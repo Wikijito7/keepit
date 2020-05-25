@@ -122,7 +122,8 @@ class NotasGui:
                     self.boton_vereditar = tk.Button(self.gui_notas, text="Ver/Editar", width=17, font=("Arial", font_size),
                                                      command=lambda i=nota: self.load_gui_crear_notas(i))
                     self.boton_vereditar.place(x=x, y=y + 80)
-                    self.eliminar = tk.Button(self.gui_notas, text="Eliminar", width=17, font=("Arial", font_size))
+                    self.eliminar = tk.Button(self.gui_notas, text="Eliminar", width=17, font=("Arial", font_size),
+                                              command=lambda i=nota: self.eliminar_nota(nota.identificador))
                     self.eliminar.place(x=x, y=y + 110)
                 canvas.create_rectangle(20, 20, 210, 190, outline="#000", width=2)
             except IndexError:
@@ -174,13 +175,18 @@ class NotasGui:
         self.obtener_notas()
         self.cargar_notas()
 
+    def eliminar_nota(self, id):
+        self.bd.delete_nota(id)
+        self.recargar_notas()
 
 class CrearNotaGui:
     def __init__(self, bd, usuario, gui_notas, interf_principal, nota=None):
         self.bd = bd
+        self.edit_mode = False
         if nota is None:
             self.nota = Nota("", "", "", usuario, 0)
         else:
+            self.edit_mode = True
             self.nota = nota
 
         self.usuario = usuario
@@ -199,7 +205,6 @@ class CrearNotaGui:
         etiqueta = self.input_etiqueta_nota.get()
         contenido = self.txt_contenido.get("1.0", 'end+1c')
         if titulo != "" and categoria != "":
-            # inserta sin etiqueta
             if not self.bd.exists_categoria(categoria):
                 self.bd.insert("Categorias", (categoria,))
 
@@ -208,16 +213,19 @@ class CrearNotaGui:
             else:
                 etiquetas = []
 
-            if not self.bd.exist_nota(titulo):
+            if not self.bd.exist_nota(titulo) and not self.edit_mode:
                 self.bd.insert("Notas", (None, titulo, contenido, categoria, self.usuario.email))
             else:
                 self.bd.update_nota(Nota(titulo, contenido, categoria, self.nota.usuario, self.nota.identificador, etiquetas))
+                self.bd.delete_etiquetas(self.nota.identificador)
 
             for etiqueta in etiquetas:
                 if self.bd.obtain_id_etiquetas(etiqueta) is None:
                     self.bd.insert("etiquetas", (etiqueta, None))
-                self.bd.insert("Notas_has_Etiquetas", ((self.bd.obtain_id_notas()), self.bd.obtain_id_etiquetas(etiqueta)))
-
+                if not self.edit_mode:
+                    self.bd.insert("Notas_has_Etiquetas", ((self.bd.obtain_last_id_notas()), self.bd.obtain_id_etiquetas(etiqueta)))
+                else:
+                    self.bd.insert("Notas_has_Etiquetas", (self.nota.identificador, self.bd.obtain_id_etiquetas(etiqueta)))
                 print(bd.select("Notas"))  # check method
                 print(bd.select("Etiquetas"))  # check method
             self.gui_notas.recargar_notas()
