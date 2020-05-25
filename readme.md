@@ -4,7 +4,9 @@ KeepIt es un programa de gestión de notas. Está programado en Python y soporta
 
 Dependencias:
 
-Tkinter (integrado en Python)
-PyMySql
-Una base de datos SQL, preferible MySQL.
+· Tkinter (integrado en Python)
+
+· PyMySql
+
+· Una base de datos SQL, preferible MySQL.
 
