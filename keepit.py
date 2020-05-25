@@ -62,6 +62,15 @@ class BaseDatos:
         self.cursor.execute("update notas set titulo = %s, contenido = %s, categoria = %s where id_notas = %s",
                             (nota.get_titulo(), nota.get_contenido(), nota.get_categoria(), str(nota.identificador)))
 
+    def delete_etiquetas(self, id):
+        # delete from notas_has_etiquetas where  = 305;
+        self.cursor.execute("delete from notas_has_etiquetas where notas_id_notas = %s", id)
+        self.conexion.commit()
+
+    def delete_nota(self, id):
+        self.cursor.execute("delete from notas where id_notas = %s", id)
+        self.conexion.commit()
+
     def insert(self, tabla, datos: tuple):
         if isinstance(datos, tuple):
             # TODO HACK: Hacerlo de otra manera más entendible.
@@ -71,7 +80,7 @@ class BaseDatos:
         else:
             raise ValueError("Debes introducir una tupla en el método insert.")  # Paula quejica tq bb
 
-    def obtain_id_notas(self):
+    def obtain_last_id_notas(self):
         """
         execute a select to search id
         :return {int}: return last id_nota
