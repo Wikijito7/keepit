@@ -80,7 +80,6 @@ class NotasGui:
         self.usuario = usuario
         self.notas = []
         self.rango_notas = 0
-        self.botones = []
         # Cargamos la interfaz.
         self.gui_notas.resizable(0, 0)
         self.gui_notas.geometry("1024x768")
@@ -101,7 +100,6 @@ class NotasGui:
             self.notas.append(Nota(nota[1], nota[2], nota[3], self.usuario, nota[0], etiquetas))
 
     def cargar_notas(self):
-        self.botones = []
         for n in range(6):
             m = 3
             font_size = 10
@@ -208,16 +206,18 @@ class CrearNotaGui:
             if not self.bd.exists_categoria(categoria):
                 self.bd.insert("Categorias", (categoria,))
 
+            etiquetas = []
+
             if etiqueta != "":
                 etiquetas = etiqueta.split(",")
-            else:
-                etiquetas = []
 
             if not self.bd.exist_nota(titulo) and not self.edit_mode:
                 self.bd.insert("Notas", (None, titulo, contenido, categoria, self.usuario.email))
-            else:
+            elif self.edit_mode:
                 self.bd.update_nota(Nota(titulo, contenido, categoria, self.nota.usuario, self.nota.identificador, etiquetas))
                 self.bd.delete_etiquetas(self.nota.identificador)
+            else:
+                messagebox.showwarning("Alerta", "Esa etiqueta ya existe. Prueba a darle a Ver/Editar.)")
 
             for etiqueta in etiquetas:
                 if self.bd.obtain_id_etiquetas(etiqueta) is None:
@@ -226,8 +226,6 @@ class CrearNotaGui:
                     self.bd.insert("Notas_has_Etiquetas", ((self.bd.obtain_last_id_notas()), self.bd.obtain_id_etiquetas(etiqueta)))
                 else:
                     self.bd.insert("Notas_has_Etiquetas", (self.nota.identificador, self.bd.obtain_id_etiquetas(etiqueta)))
-                print(bd.select("Notas"))  # check method
-                print(bd.select("Etiquetas"))  # check method
             self.gui_notas.recargar_notas()
             self.gui_crea_notas.withdraw()
         else:
