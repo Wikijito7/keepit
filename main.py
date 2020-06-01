@@ -14,6 +14,7 @@ class LoginRegisterGui:
         self.conexion = bd.conexion
 
         # Cargar componentes y demases del programa.
+        self.gui_login.iconbitmap("./keepit.ico")
         self.gui_login.resizable(0, 0)
         self.gui_login.title("Keepit v0.1")  # Paula quejica
         self.load_widgets_login()
@@ -81,6 +82,7 @@ class NotasGui:
         self.notas = []
         self.rango_notas = 0
         # Cargamos la interfaz.
+        self.gui_notas.iconbitmap("./keepit.ico")
         self.gui_notas.resizable(0, 0)
         self.gui_notas.geometry("1024x768")
         self.gui_notas.title("Keepit v0.1")
@@ -131,9 +133,14 @@ class NotasGui:
                 self.next_page.place(x=20)
             canvas.place(x=x - 40, y=y - 30)
 
+    def buscar_notas(self):
+        self.gui_notas.withdraw()
+        BusquedaGui(self.usuario, self.bd)
+
     def gui_notas_load_widgets(self):
         self.titulo = tk.Label(self.gui_notas, text="Keepit", font=("Arial", 20)).place(x=20, y=20)
-        self.btn_buscar = tk.Button(self.gui_notas, text="Buscar", font=("Arial", 14), width=12).place(x=846, y=20)
+        self.btn_buscar = tk.Button(self.gui_notas, text="Buscar", font=("Arial", 14), width=12,
+                                    command=self.buscar_notas).place(x=846, y=20)
         self.btn_cerrar_sesion = tk.Button(self.gui_notas, text="Cerrar sesión", font=("Arial", 14),
                                            width=12, command=self.cerrar_sesion).place(x=846, y=700)
         self.next_page = tk.Button(self.gui_notas, text="Siguiente", font=("Arial, 14"), width=10,
@@ -193,6 +200,7 @@ class CrearNotaGui:
         # Cargamos la interfaz.
         self.gui_notas = interf_principal
         self.gui_crea_notas = tk.Toplevel(gui_notas)
+        self.gui_crea_notas.iconbitmap("./keepit.ico")
         self.gui_crea_notas.resizable(0, 0)
         self.gui_crea_notas.title("Keepit v0.1")
         self.load_widgets_crea_nota()
@@ -281,14 +289,87 @@ class CrearNotaGui:
 
 
 class BusquedaGui:
-    # TODO Crear el formulario de busqueda
-    pass
+    def __init__(self, usuario, bd):
+        self.bd = bd
+        self.usuario = usuario
+
+        # Cargamos la interfaz.
+        self.gui_busqueda = tk.Tk()
+        self.gui_busqueda.iconbitmap("./keepit.ico")
+        self.gui_busqueda.resizable(0, 0)
+        self.gui_busqueda.title("Keepit v0.1")
+        self.gui_busqueda.geometry("1024x768")
+        self.load_widgets_busqueda()
+
+    def crear_botones(self):
+        notas_usuario = bd.select_filtrado("notas", ("Usuario_email", usuario.get_email()))
+        lista_etiquetas = []
+        lista_categorias = []
+        for nota in notas_usuario:
+            id = nota[0]
+            categoria = nota[1]
+            if categoria not in lista_categorias:
+                lista_categorias.append(categoria)
+
+            relacion = bd.select_filtrado("notas_has_etiquetas", ("Notas_id_notas", id))
+            for rel in relacion:
+                id_etiqueta = rel[1]
+                etiqueta = bd.obtain_etiqueta(id_etiqueta)[0][0]
+                if etiqueta not in lista_etiquetas:
+                    lista_etiquetas.append(etiqueta)
+
+        for n in range(8):
+            m = 4
+            font_size = 11
+            col = n % m
+            row = 2 * m * (n // m)
+            x, y = (202 + 180 * col, 198 + 7 * row)
+            max_len = 20
+            try:
+                texto = lista_categorias[n]
+                if len(texto) > max_len:
+                    texto = texto[:max_len] + "..."
+                tk.Button(self.gui_busqueda, text=texto, wraplength=120, width=12, height=2,
+                          font=("Arial", font_size)).place(x=x, y=y)
+            except IndexError:
+                pass
+
+            try:
+                texto = lista_etiquetas[n]
+                if len(texto) > max_len:
+                    texto = texto[:max_len] + "..."
+                tk.Button(self.gui_busqueda, text=texto, wraplength=120, width=12, height=2,
+                          font=("Arial", font_size)).place(x=x, y=y + 240)
+            except IndexError:
+                pass
+
+        print(lista_categorias, lista_etiquetas)
+
+    def cerrar_sesion(self):
+        self.gui_busqueda.withdraw()
+        LoginRegisterGui(bd)
+
+    def volver_menu(self):
+        self.gui_busqueda.withdraw()
+        NotasGui(self.usuario, self.bd)
+
+    def load_widgets_busqueda(self):
+        self.titulo = tk.Label(self.gui_busqueda, text="Keepit", font=("Arial", 20)).place(x=20, y=20)
+        self.btn_buscar = tk.Button(self.gui_busqueda, text="Volver", font=("Arial", 14), width=12,
+                                    command=self.volver_menu).place(x=20, y=700)
+        self.btn_cerrar_sesion = tk.Button(self.gui_busqueda, text="Cerrar sesión", font=("Arial", 14),
+                                           width=12, command=self.cerrar_sesion).place(x=846, y=700)
+
+        tk.Label(self.gui_busqueda, text="Categorías", font=("Arial", 16)).place(x=202, y=148)
+        tk.Label(self.gui_busqueda, text="Etiquetas", font=("Arial", 16)).place(x=202, y=388)
+
+        self.crear_botones()
 
 
 # Crear el formulario de login/register DONE
 # Crear el formulario de las notas DONE
-# Crear el formulario de añadir una nueva nota
-# Crear el formulario de modificar la nota
+# Crear el formulario de añadir una nueva nota DONE
+# Crear el formulario de modificar la nota DONE
 # Crear el formulario de busqueda
 
 
