@@ -71,6 +71,10 @@ class BaseDatos:
         self.cursor.execute("delete from notas where id_notas = %s", id)
         self.conexion.commit()
 
+    def obtain_etiqueta(self, id):
+        self.cursor.execute("select nombre from etiquetas where id_etiquetas = %s", id)
+        return self.cursor.fetchall()
+
     def insert(self, tabla, datos: tuple):
         if isinstance(datos, tuple):
             # TODO HACK: Hacerlo de otra manera más entendible.
@@ -203,8 +207,3 @@ if __name__ == "__main__":
     print(bd.select_filtrado("usuario", ("email", "test@")))
 
     print(bd.usuario_login("guille@test.es", "frantusmuerto"))
-    # asert bd.check_exists
-    if bd.check_exist(("usuario", "paulaquejica")):
-        print("true")
-    else:
-        print("false")
