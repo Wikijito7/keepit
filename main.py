@@ -82,9 +82,9 @@ class NotasGui:
         self.notas = []
         self.rango_notas = 0
         # Cargamos la interfaz.
+        self.gui_notas.geometry("1024x768")
         self.gui_notas.iconbitmap("./keepit.ico")
         self.gui_notas.resizable(0, 0)
-        self.gui_notas.geometry("1024x768")
         self.gui_notas.title("Keepit v0.1")
         self.obtener_notas()
         self.gui_notas_load_widgets()
@@ -119,7 +119,8 @@ class NotasGui:
                     tk.Label(self.gui_notas, text=nota.get_titulo(), wraplength=150, font=("Arial", font_size, "bold"),
                              justify="center").place(x=x, y=y)
 
-                    self.boton_vereditar = tk.Button(self.gui_notas, text="Ver/Editar", width=17, font=("Arial", font_size),
+                    self.boton_vereditar = tk.Button(self.gui_notas, text="Ver/Editar", width=17,
+                                                     font=("Arial", font_size),
                                                      command=lambda i=nota: self.load_gui_crear_notas(i))
                     self.boton_vereditar.place(x=x, y=y + 80)
                     self.eliminar = tk.Button(self.gui_notas, text="Eliminar", width=17, font=("Arial", font_size),
@@ -223,7 +224,8 @@ class CrearNotaGui:
             if not self.bd.exist_nota(titulo) and not self.edit_mode:
                 self.bd.insert("Notas", (None, titulo, contenido, categoria, self.usuario.email))
             elif self.edit_mode:
-                self.bd.update_nota(Nota(titulo, contenido, categoria, self.nota.usuario, self.nota.identificador, etiquetas))
+                self.bd.update_nota(
+                    Nota(titulo, contenido, categoria, self.nota.usuario, self.nota.identificador, etiquetas))
                 self.bd.delete_etiquetas(self.nota.identificador)
             else:
                 messagebox.showwarning("Alerta", "Esa etiqueta ya existe. Prueba a darle a Ver/Editar.)")
@@ -233,9 +235,11 @@ class CrearNotaGui:
                 if self.bd.obtain_id_etiquetas(etiqueta) is None:
                     self.bd.insert("etiquetas", (etiqueta, None))
                 if not self.edit_mode:
-                    self.bd.insert("Notas_has_Etiquetas", ((self.bd.obtain_last_id_notas()), self.bd.obtain_id_etiquetas(etiqueta)))
+                    self.bd.insert("Notas_has_Etiquetas",
+                                   ((self.bd.obtain_last_id_notas()), self.bd.obtain_id_etiquetas(etiqueta)))
                 else:
-                    self.bd.insert("Notas_has_Etiquetas", (self.nota.identificador, self.bd.obtain_id_etiquetas(etiqueta)))
+                    self.bd.insert("Notas_has_Etiquetas",
+                                   (self.nota.identificador, self.bd.obtain_id_etiquetas(etiqueta)))
             self.gui_notas.recargar_notas()
             self.gui_crea_notas.withdraw()
         else:
@@ -245,7 +249,6 @@ class CrearNotaGui:
         self.gui_crea_notas.withdraw()
 
     def load_widgets_crea_nota(self):
-        # TODO Colocar beautiful una vez que funcione [self.input_email.grid(column=0, row=1, columnspan=3, padx=20)]
         font_title = 20
         font_n = 12
         self.titulo_gui_notas = tk.Label(self.gui_crea_notas, text="Keepit", font=("Arial", font_title), width=30)
@@ -292,7 +295,10 @@ class BusquedaGui:
     def __init__(self, usuario, bd):
         self.bd = bd
         self.usuario = usuario
-
+        self.eti_n = 0
+        self.cat_n = 0
+        self.lista_etiquetas = []
+        self.lista_categorias = []
         # Cargamos la interfaz.
         self.gui_busqueda = tk.Tk()
         self.gui_busqueda.iconbitmap("./keepit.ico")
@@ -300,50 +306,167 @@ class BusquedaGui:
         self.gui_busqueda.title("Keepit v0.1")
         self.gui_busqueda.geometry("1024x768")
         self.load_widgets_busqueda()
+        self.gui_busqueda.protocol("WM_DELETE_WINDOW", self.on_closing)
+        self.gui_busqueda.mainloop()
+
+    def on_closing(self):
+        self.gui_busqueda.destroy()
+        exit()
+
+    def filter_cat(self, cat):
+        lista_notas = []
+        notas = self.bd.select_filtrado("notas", ("categoria", cat))
+
+        for nota in notas:
+            etiquetas = []
+            etiquetas_id = self.bd.select_filtrado("Notas_has_Etiquetas", ("Notas_id_notas", nota[0]))
+
+            for etiqueta_id in etiquetas_id:
+                etiqueta = self.bd.select_filtrado("etiquetas", ("id_etiquetas", etiqueta_id[1]))
+                etiquetas.append(etiqueta[0][0])
+            lista_notas.append(Nota(nota[1], nota[2], nota[3], self.usuario, nota[0], etiquetas))
+        self.cargar_notas(lista_notas)
+
+    def filter_eti(self, eti):
+        lista_notas = []
+        id_eti = self.bd.obtain_id_etiquetas(eti)
+
+        relacion = bd.select_filtrado("notas_has_etiquetas", ("Etiquetas_id_etiquetas", id_eti))
+        for nota in relacion:
+            id_nota = nota[0]
+            nota = self.bd.select_filtrado("notas", ("id_notas", id_nota))[0]
+            etiquetas = []
+            etiquetas_id = self.bd.select_filtrado("Notas_has_Etiquetas", ("Notas_id_notas", nota[0]))
+            for etiqueta_id in etiquetas_id:
+                etiqueta = self.bd.select_filtrado("etiquetas", ("id_etiquetas", etiqueta_id[1]))
+                etiquetas.append(etiqueta[0][0])
+            lista_notas.append(Nota(nota[1], nota[2], nota[3], self.usuario, nota[0], etiquetas))
+
+        self.cargar_notas(lista_notas)
+
+    def recargar_notas(self):
+        pass
 
     def crear_botones(self):
         notas_usuario = bd.select_filtrado("notas", ("Usuario_email", usuario.get_email()))
-        lista_etiquetas = []
-        lista_categorias = []
+        self.lista_etiquetas = []
+        self.lista_categorias = []
         for nota in notas_usuario:
             id = nota[0]
-            categoria = nota[1]
-            if categoria not in lista_categorias:
-                lista_categorias.append(categoria)
+            categoria = nota[3]
+            if categoria not in self.lista_categorias:
+                self.lista_categorias.append(categoria)
 
             relacion = bd.select_filtrado("notas_has_etiquetas", ("Notas_id_notas", id))
             for rel in relacion:
                 id_etiqueta = rel[1]
                 etiqueta = bd.obtain_etiqueta(id_etiqueta)[0][0]
-                if etiqueta not in lista_etiquetas:
-                    lista_etiquetas.append(etiqueta)
+                if etiqueta not in self.lista_etiquetas:
+                    self.lista_etiquetas.append(etiqueta)
 
         for n in range(8):
             m = 4
             font_size = 11
             col = n % m
             row = 2 * m * (n // m)
-            x, y = (202 + 180 * col, 198 + 7 * row)
+            x, y = (182 + 170 * col, 198 + 8 * row)
+            canvas = tk.Canvas(self.gui_busqueda)
             max_len = 20
             try:
-                texto = lista_categorias[n]
+                texto = self.lista_categorias[n + self.cat_n]
                 if len(texto) > max_len:
-                    texto = texto[:max_len] + "..."
-                tk.Button(self.gui_busqueda, text=texto, wraplength=120, width=12, height=2,
-                          font=("Arial", font_size)).place(x=x, y=y)
+                    texto_final = texto[:max_len] + "..."
+                else:
+                    texto_final = texto
+
+                tk.Button(self.gui_busqueda, text=texto_final, wraplength=120, width=12, height=2,
+                          font=("Arial", font_size), command=lambda i=texto: self.filter_cat(i)).place(x=x, y=y)
             except IndexError:
-                pass
+                canvas.create_rectangle(0, 0, 112, 20, width=0)
+                canvas.place(x=x, y=y)
+
+        for n in range(8):
+            m = 4
+            font_size = 11
+            col = n % m
+            row = 2 * m * (n // m)
+            x, y = (182 + 170 * col, 198 + 8 * row)
+            canvas = tk.Canvas(self.gui_busqueda)
+            max_len = 20
 
             try:
-                texto = lista_etiquetas[n]
+                texto = self.lista_etiquetas[n + self.eti_n]
                 if len(texto) > max_len:
-                    texto = texto[:max_len] + "..."
-                tk.Button(self.gui_busqueda, text=texto, wraplength=120, width=12, height=2,
-                          font=("Arial", font_size)).place(x=x, y=y + 240)
-            except IndexError:
-                pass
+                    texto_final = texto[:max_len] + "..."  # Muxo texto (yoda)
+                else:
+                    texto_final = texto
 
-        print(lista_categorias, lista_etiquetas)
+                tk.Button(self.gui_busqueda, text=texto_final, wraplength=120, width=12, height=2,
+                          font=("Arial", font_size), command=lambda i=texto: self.filter_eti(i)).place(x=x, y=y + 240)
+            except IndexError:
+                canvas.create_rectangle(0, 0, 132, 40, width=0)
+                canvas.place(x=x - 20, y=y + 240 - 10)
+
+        x = 862
+        tk.Button(self.gui_busqueda, text="↑", width=4, height=2, font=("Arial", 12),
+                  command=lambda: self.previous_group("cat")).place(x=x, y=198)
+        tk.Button(self.gui_busqueda, text="↓", width=4, height=2, font=("Arial", 12),
+                  command=lambda: self.next_group("cat")).place(x=x, y=262)
+
+        tk.Button(self.gui_busqueda, text="↑", width=4, height=2, font=("Arial", 12),
+                  command=lambda: self.previous_group("eti")).place(x=x, y=198 + 240)
+        tk.Button(self.gui_busqueda, text="↓", width=4, height=2, font=("Arial", 12),
+                  command=lambda: self.next_group("eti")).place(x=x, y=262 + 240)
+
+        tk.Label(self.gui_busqueda, text="Etiquetas", font=("Arial", 16)).place(x=182, y=378)
+        tk.Button(self.gui_busqueda, text="Cerrar sesión", font=("Arial", 14),
+                  width=12, command=self.cerrar_sesion).place(x=846, y=700)
+
+    def cargar_notas(self, notas):
+        self.lbl_categoria.place(x=1200)
+        self.boton_buscar.place(x=846)
+        for n in range(6):
+            m = 3
+            font_size = 10
+            col = n % m
+            row = 2 * m * (n // m)
+            canvas = tk.Canvas(self.gui_busqueda)
+            x, y = (202 + 220 * col, 228 + 32 * row)
+            try:
+                nota = notas[n]
+
+                tk.Label(self.gui_busqueda, text=nota.get_titulo(), wraplength=150, font=("Arial", font_size, "bold"),
+                         justify="center").place(x=x, y=y)
+
+                self.boton_vereditar = tk.Button(self.gui_busqueda, text="Ver/Editar", width=17,
+                                                 font=("Arial", font_size),
+                                                 command=lambda i=nota: self.load_gui_crear_notas(i))
+                self.boton_vereditar.place(x=x, y=y + 80)
+                self.eliminar = tk.Button(self.gui_busqueda, text="Eliminar", width=17, font=("Arial", font_size),
+                                          command=lambda i=nota: self.eliminar_nota(i.identificador))
+                self.eliminar.place(x=x, y=y + 110)
+                canvas.create_rectangle(20, 20, 210, 190, outline="#000", width=2)
+            except IndexError:
+                canvas.create_rectangle(20, 20, 210, 190, width=0)
+            canvas.place(x=x - 40, y=y - 30)
+
+    def next_group(self, group):
+        if group == "eti":
+            if self.eti_n + 4 < len(self.lista_etiquetas):
+                self.eti_n += 4
+        elif group == "cat":
+            if self.cat_n + 4 < len(self.lista_categorias):
+                self.cat_n += 4
+        self.crear_botones()
+
+    def previous_group(self, group):
+        if group == "eti":
+            if self.eti_n - 4 >= 0:
+                self.eti_n -= 4
+        elif group == "cat":
+            if self.cat_n - 4 >= 0:
+                self.cat_n -= 4
+        self.crear_botones()
 
     def cerrar_sesion(self):
         self.gui_busqueda.withdraw()
@@ -353,17 +476,38 @@ class BusquedaGui:
         self.gui_busqueda.withdraw()
         NotasGui(self.usuario, self.bd)
 
+    def eliminar_nota(self, id):
+        self.bd.delete_nota(id)
+
+    def load_gui_crear_notas(self, nota=None):
+        CrearNotaGui(self.bd, self.usuario, self.gui_busqueda, self, nota)
+
     def load_widgets_busqueda(self):
         self.titulo = tk.Label(self.gui_busqueda, text="Keepit", font=("Arial", 20)).place(x=20, y=20)
-        self.btn_buscar = tk.Button(self.gui_busqueda, text="Volver", font=("Arial", 14), width=12,
+        self.btn_volver = tk.Button(self.gui_busqueda, text="Volver", font=("Arial", 14), width=12,
                                     command=self.volver_menu).place(x=20, y=700)
-        self.btn_cerrar_sesion = tk.Button(self.gui_busqueda, text="Cerrar sesión", font=("Arial", 14),
-                                           width=12, command=self.cerrar_sesion).place(x=846, y=700)
-
-        tk.Label(self.gui_busqueda, text="Categorías", font=("Arial", 16)).place(x=202, y=148)
-        tk.Label(self.gui_busqueda, text="Etiquetas", font=("Arial", 16)).place(x=202, y=388)
-
         self.crear_botones()
+
+        self.lbl_categoria = tk.Label(self.gui_busqueda, text="Categorías", font=("Arial", 16))
+        self.lbl_categoria.place(x=182, y=148)
+        self.boton_buscar = tk.Button(self.gui_busqueda, text="Buscar", font=("Arial", 14), width=12,
+                                      command=self.recargar_ventana)
+        self.boton_buscar.place(x=1200, y=20)
+        tk.Label(self.gui_busqueda, text="Etiquetas", font=("Arial", 16)).place(x=182, y=378)
+
+    def recargar_ventana(self):
+        self.boton_buscar.place(x=1200)
+
+        for n in range(6):
+            m = 3
+            font_size = 10
+            col = n % m
+            row = 2 * m * (n // m)
+            canvas = tk.Canvas(self.gui_busqueda)
+            x, y = (202 + 220 * col, 228 + 32 * row)
+            canvas.create_rectangle(20, 20, 210, 190, width=0)
+            canvas.place(x=x - 40, y=y - 30)
+        self.load_widgets_busqueda()
 
 
 # Crear el formulario de login/register DONE
