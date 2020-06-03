@@ -131,7 +131,7 @@ class NotasGui:
                 canvas.create_rectangle(20, 20, 210, 190, width=0)
                 self.next_page.place(x=1024)
             else:
-                self.next_page.place(x=20)
+                self.next_page.place(x=80)
             canvas.place(x=x - 40, y=y - 30)
 
     def buscar_notas(self):
@@ -144,13 +144,13 @@ class NotasGui:
                                     command=self.buscar_notas).place(x=846, y=20)
         self.btn_cerrar_sesion = tk.Button(self.gui_notas, text="Cerrar sesión", font=("Arial", 14),
                                            width=12, command=self.cerrar_sesion).place(x=846, y=700)
-        self.next_page = tk.Button(self.gui_notas, text="Siguiente", font=("Arial, 14"), width=10,
-                                   command=self.pagina_siguiente)
-        self.next_page.place(x=20, y=222)
-
-        self.previous_page = tk.Button(self.gui_notas, text="Anterior", font=("Arial, 14"), width=10,
+        self.previous_page = tk.Button(self.gui_notas, text="↑", font=("Arial, 14"), width=5,
                                        command=self.pagina_anterior)
-        self.previous_page.place(x=1024, y=532)
+        self.previous_page.place(x=1024, y=222)
+
+        self.next_page = tk.Button(self.gui_notas, text="↓", font=("Arial, 14"), width=5,
+                                   command=self.pagina_siguiente)
+        self.next_page.place(x=80, y=532)
         self.cargar_notas()
 
     def load_gui_crear_notas(self, nota=None):
@@ -163,15 +163,14 @@ class NotasGui:
     def pagina_siguiente(self):
         if self.rango_notas + 6 <= len(self.notas):
             self.rango_notas += 5
-            self.previous_page.place(x=20)
+            self.previous_page.place(x=80)
             self.cargar_notas()
-            print(self.rango_notas, self.rango_notas + 6, len(self.notas))
 
     def pagina_anterior(self):
         if self.rango_notas - 5 >= 0:
             self.rango_notas -= 5
             self.cargar_notas()
-            self.next_page.place(x=20)
+            self.next_page.place(x=80)
 
         if self.rango_notas == 0:
             self.previous_page.place(x=1024)
@@ -299,6 +298,8 @@ class BusquedaGui:
         self.cat_n = 0
         self.lista_etiquetas = []
         self.lista_categorias = []
+        self.notas = []
+        self.rango_notas = 0
         # Cargamos la interfaz.
         self.gui_busqueda = tk.Tk()
         self.gui_busqueda.iconbitmap("./keepit.ico")
@@ -314,7 +315,8 @@ class BusquedaGui:
         exit()
 
     def filter_cat(self, cat):
-        lista_notas = []
+        self.notas = []
+        self.rango_notas = 0
         notas = self.bd.select_filtrado("notas", ("categoria", cat))
 
         for nota in notas:
@@ -324,11 +326,12 @@ class BusquedaGui:
             for etiqueta_id in etiquetas_id:
                 etiqueta = self.bd.select_filtrado("etiquetas", ("id_etiquetas", etiqueta_id[1]))
                 etiquetas.append(etiqueta[0][0])
-            lista_notas.append(Nota(nota[1], nota[2], nota[3], self.usuario, nota[0], etiquetas))
-        self.cargar_notas(lista_notas)
+            self.notas.append(Nota(nota[1], nota[2], nota[3], self.usuario, nota[0], etiquetas))
+        self.cargar_notas(self.notas)
 
     def filter_eti(self, eti):
-        lista_notas = []
+        self.notas = []
+        self.rango_notas = 0
         id_eti = self.bd.obtain_id_etiquetas(eti)
 
         relacion = bd.select_filtrado("notas_has_etiquetas", ("Etiquetas_id_etiquetas", id_eti))
@@ -340,9 +343,27 @@ class BusquedaGui:
             for etiqueta_id in etiquetas_id:
                 etiqueta = self.bd.select_filtrado("etiquetas", ("id_etiquetas", etiqueta_id[1]))
                 etiquetas.append(etiqueta[0][0])
-            lista_notas.append(Nota(nota[1], nota[2], nota[3], self.usuario, nota[0], etiquetas))
+            self.notas.append(Nota(nota[1], nota[2], nota[3], self.usuario, nota[0], etiquetas))
 
-        self.cargar_notas(lista_notas)
+        self.cargar_notas(self.notas)
+
+    def filtrar_titulo(self):
+        titulo = self.titulo_entry.get()
+        self.notas = []
+        self.rango_notas = 0
+        notas = self.bd.select_filtrado("notas", ("titulo", titulo))
+
+        for nota in notas:
+            id_nota = nota[0]
+            nota = self.bd.select_filtrado("notas", ("id_notas", id_nota))[0]
+            etiquetas = []
+            etiquetas_id = self.bd.select_filtrado("Notas_has_Etiquetas", ("Notas_id_notas", nota[0]))
+            for etiqueta_id in etiquetas_id:
+                etiqueta = self.bd.select_filtrado("etiquetas", ("id_etiquetas", etiqueta_id[1]))
+                etiquetas.append(etiqueta[0][0])
+            self.notas.append(Nota(nota[1], nota[2], nota[3], self.usuario, nota[0], etiquetas))
+
+        self.cargar_notas(self.notas)
 
     def recargar_notas(self):
         pass
@@ -364,6 +385,24 @@ class BusquedaGui:
                 if etiqueta not in self.lista_etiquetas:
                     self.lista_etiquetas.append(etiqueta)
 
+        self.recargar_botones()
+
+        x = 862
+        tk.Button(self.gui_busqueda, text="↑", width=4, height=2, font=("Arial", 12),
+                  command=lambda: self.previous_group("cat")).place(x=x, y=198)
+        tk.Button(self.gui_busqueda, text="↓", width=4, height=2, font=("Arial", 12),
+                  command=lambda: self.next_group("cat")).place(x=x, y=262)
+
+        tk.Button(self.gui_busqueda, text="↑", width=4, height=2, font=("Arial", 12),
+                  command=lambda: self.previous_group("eti")).place(x=x, y=198 + 240)
+        tk.Button(self.gui_busqueda, text="↓", width=4, height=2, font=("Arial", 12),
+                  command=lambda: self.next_group("eti")).place(x=x, y=262 + 240)
+
+        tk.Label(self.gui_busqueda, text="Etiquetas", font=("Arial", 16)).place(x=182, y=378)
+        tk.Button(self.gui_busqueda, text="Cerrar sesión", font=("Arial", 14),
+                  width=12, command=self.cerrar_sesion).place(x=846, y=700)
+
+    def recargar_botones(self):
         for n in range(8):
             m = 4
             font_size = 11
@@ -382,7 +421,7 @@ class BusquedaGui:
                 tk.Button(self.gui_busqueda, text=texto_final, wraplength=120, width=12, height=2,
                           font=("Arial", font_size), command=lambda i=texto: self.filter_cat(i)).place(x=x, y=y)
             except IndexError:
-                canvas.create_rectangle(0, 0, 112, 20, width=0)
+                canvas.create_rectangle(0, 0, 112, 5, width=0)
                 canvas.place(x=x, y=y)
 
         for n in range(8):
@@ -404,27 +443,15 @@ class BusquedaGui:
                 tk.Button(self.gui_busqueda, text=texto_final, wraplength=120, width=12, height=2,
                           font=("Arial", font_size), command=lambda i=texto: self.filter_eti(i)).place(x=x, y=y + 240)
             except IndexError:
-                canvas.create_rectangle(0, 0, 132, 40, width=0)
-                canvas.place(x=x - 20, y=y + 240 - 10)
-
-        x = 862
-        tk.Button(self.gui_busqueda, text="↑", width=4, height=2, font=("Arial", 12),
-                  command=lambda: self.previous_group("cat")).place(x=x, y=198)
-        tk.Button(self.gui_busqueda, text="↓", width=4, height=2, font=("Arial", 12),
-                  command=lambda: self.next_group("cat")).place(x=x, y=262)
-
-        tk.Button(self.gui_busqueda, text="↑", width=4, height=2, font=("Arial", 12),
-                  command=lambda: self.previous_group("eti")).place(x=x, y=198 + 240)
-        tk.Button(self.gui_busqueda, text="↓", width=4, height=2, font=("Arial", 12),
-                  command=lambda: self.next_group("eti")).place(x=x, y=262 + 240)
-
-        tk.Label(self.gui_busqueda, text="Etiquetas", font=("Arial", 16)).place(x=182, y=378)
-        tk.Button(self.gui_busqueda, text="Cerrar sesión", font=("Arial", 14),
-                  width=12, command=self.cerrar_sesion).place(x=846, y=700)
+                canvas.create_rectangle(0, 0, 132, 10, width=0)
+                canvas.place(x=x - 20, y=y + 240 - 5)
 
     def cargar_notas(self, notas):
         self.lbl_categoria.place(x=1200)
         self.boton_buscar.place(x=846)
+        self.titulo_entry.place(x=1200)
+        self.boton_titulo.place(x=1200)
+
         for n in range(6):
             m = 3
             font_size = 10
@@ -433,7 +460,7 @@ class BusquedaGui:
             canvas = tk.Canvas(self.gui_busqueda)
             x, y = (202 + 220 * col, 228 + 32 * row)
             try:
-                nota = notas[n]
+                nota = notas[n + self.rango_notas]
 
                 tk.Label(self.gui_busqueda, text=nota.get_titulo(), wraplength=150, font=("Arial", font_size, "bold"),
                          justify="center").place(x=x, y=y)
@@ -450,23 +477,53 @@ class BusquedaGui:
                 canvas.create_rectangle(20, 20, 210, 190, width=0)
             canvas.place(x=x - 40, y=y - 30)
 
+        self.previous_page = tk.Button(self.gui_busqueda, text="↑", font=("Arial, 14"), width=5,
+                                       command=self.pagina_anterior)
+        self.previous_page.place(x=1024, y=222)
+
+        self.next_page = tk.Button(self.gui_busqueda, text="↓", font=("Arial, 14"), width=5,
+                                   command=self.pagina_siguiente)
+        self.next_page.place(x=80, y=532)
+
     def next_group(self, group):
         if group == "eti":
-            if self.eti_n + 4 < len(self.lista_etiquetas):
-                self.eti_n += 4
+            if self.eti_n + 8 < len(self.lista_etiquetas):
+                self.eti_n += 8
+                self.recargar_botones()
+                if self.eti_n + 8 > len(self.lista_etiquetas):
+                    self.crear_botones()
+
         elif group == "cat":
-            if self.cat_n + 4 < len(self.lista_categorias):
-                self.cat_n += 4
-        self.crear_botones()
+            if self.cat_n + 8 < len(self.lista_categorias):
+                self.cat_n += 8
+                self.recargar_botones()
+                if self.cat_n + 8 > len(self.lista_categorias):
+                    self.crear_botones()
 
     def previous_group(self, group):
         if group == "eti":
-            if self.eti_n - 4 >= 0:
-                self.eti_n -= 4
+            if self.eti_n - 8 >= 0:
+                self.eti_n -= 8
+                self.crear_botones()
         elif group == "cat":
-            if self.cat_n - 4 >= 0:
-                self.cat_n -= 4
-        self.crear_botones()
+            if self.cat_n - 8 >= 0:
+                self.cat_n -= 8
+                self.crear_botones()
+
+    def pagina_siguiente(self):
+        if self.rango_notas + 6 <= len(self.notas):
+            self.rango_notas += 6
+            self.previous_page.place(x=80)
+            self.cargar_notas(self.notas)
+
+    def pagina_anterior(self):
+        if self.rango_notas - 6 >= 0:
+            self.rango_notas -= 6
+            self.cargar_notas(self.notas)
+            self.next_page.place(x=80)
+
+        if self.rango_notas == 0:
+            self.previous_page.place(x=1024)
 
     def cerrar_sesion(self):
         self.gui_busqueda.withdraw()
@@ -495,16 +552,23 @@ class BusquedaGui:
         self.boton_buscar.place(x=1200, y=20)
         tk.Label(self.gui_busqueda, text="Etiquetas", font=("Arial", 16)).place(x=182, y=378)
 
+        self.titulo_entry = tk.Entry(self.gui_busqueda, width=40)
+        self.titulo_entry.place(x=575, y=30)
+
+        self.boton_titulo = tk.Button(self.gui_busqueda, text="Buscar", font=("Arial", 11), width=12,
+                                      command=self.filtrar_titulo)
+        self.boton_titulo.place(x=845, y=25)
+
     def recargar_ventana(self):
         self.boton_buscar.place(x=1200)
-
-        for n in range(6):
-            m = 3
-            font_size = 10
+        self.previous_page.place(x=1200)
+        self.next_page.place(x=1200)
+        for n in range(8):
+            m = 4
             col = n % m
             row = 2 * m * (n // m)
             canvas = tk.Canvas(self.gui_busqueda)
-            x, y = (202 + 220 * col, 228 + 32 * row)
+            x, y = (100 + 220 * col, 228 + 32 * row)
             canvas.create_rectangle(20, 20, 210, 190, width=0)
             canvas.place(x=x - 40, y=y - 30)
         self.load_widgets_busqueda()
