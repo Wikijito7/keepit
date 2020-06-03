@@ -113,13 +113,13 @@ class NotasGui:
             row = 2 * m * (n // m)
             canvas = tk.Canvas(self.gui_notas)
             x, y = (202 + 220 * col, 228 + 32 * row)
-            try:
-                nota = self.notas[self.rango_notas + n - 1]
-
-                if n == 0:
-                    tk.Button(self.gui_notas, text="+", font=("Arial", 33, "bold"), width=6, height=2,
-                              borderwidth=1, command=self.load_gui_crear_notas).place(x=x - 10, y=y + 5)
-                else:
+            if n == 0:
+                tk.Button(self.gui_notas, text="+", font=("Arial", 33, "bold"), width=6, height=2,
+                          borderwidth=1, command=self.load_gui_crear_notas).place(x=x - 10, y=y + 5)
+                canvas.create_rectangle(20, 20, 210, 190, outline="#000", width=2)
+            else:
+                try:
+                    nota = self.notas[self.rango_notas + n - 1]
                     tk.Label(self.gui_notas, text=nota.get_titulo(), wraplength=150, font=("Arial", font_size, "bold"),
                              justify="center").place(x=x, y=y)
 
@@ -130,12 +130,12 @@ class NotasGui:
                     self.eliminar = tk.Button(self.gui_notas, text="Eliminar", width=17, font=("Arial", font_size),
                                               command=lambda i=nota: self.eliminar_nota(i.identificador))
                     self.eliminar.place(x=x, y=y + 110)
-                canvas.create_rectangle(20, 20, 210, 190, outline="#000", width=2)
-            except IndexError:
-                canvas.create_rectangle(20, 20, 210, 190, width=0)
-                self.next_page.place(x=1024)
-            else:
-                self.next_page.place(x=80)
+                    canvas.create_rectangle(20, 20, 210, 190, outline="#000", width=2)
+                except IndexError:
+                    canvas.create_rectangle(20, 20, 210, 190, width=0)
+                    self.next_page.place(x=1024)
+                else:
+                    self.next_page.place(x=80)
             canvas.place(x=x - 40, y=y - 30)
 
     def buscar_notas(self):
