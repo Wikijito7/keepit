@@ -369,7 +369,7 @@ class BusquedaGui:
         pass
 
     def crear_botones(self):
-        notas_usuario = bd.select_filtrado("notas", ("Usuario_email", usuario.get_email()))
+        notas_usuario = bd.select_filtrado("notas", ("Usuario_email", self.usuario.get_email()))
         self.lista_etiquetas = []
         self.lista_categorias = []
         for nota in notas_usuario:
@@ -621,6 +621,6 @@ if __name__ == "__main__":
 
     print(bd.usuario_login("guille@test.es", "frantusmuerto"))
 
-    # LoginRegisterGui(bd)
-    usuario = bd.usuario_login("guille@test.es", "frantusmuerto")
-    NotasGui(usuario, bd)
+    LoginRegisterGui(bd)
+    # usuario = bd.usuario_login("guille@test.es", "frantusmuerto")
+    # NotasGui(usuario, bd)
