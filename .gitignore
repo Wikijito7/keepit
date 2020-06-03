@@ -5,3 +5,4 @@ __pycache__/keepit.cpython-37.pyc
 
 /bd.txt
 *.xml
+tests/Icon

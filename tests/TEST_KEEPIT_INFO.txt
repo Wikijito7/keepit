@@ -1,0 +1,12 @@
+Los tests se realizarán sobre el archivo keept.py.
+Destacar que este cuenta ya con ciertos tests en su main.
+Este contiene:
+    > El modelo de datos.
+    > Sus 3 clases BaseDatos, Nota, Usuario.
+    > Las funciones que surten a la interfaz del programa.
+Así pués contaremos con tres archivos de test basados en pytest:
+    > test_BaseDatos.
+    > test_Nota.
+    > test_Usuario.
+
+
