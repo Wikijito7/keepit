@@ -18,6 +18,7 @@ class LoginRegisterGui:
         self.gui_login.resizable(0, 0)
         self.gui_login.title("Keepit v0.1")  # Paula quejica
         self.load_widgets_login()
+        self.gui_login.protocol("WM_DELETE_WINDOW", self.on_closing)
         self.gui_login.mainloop()
 
     def login(self):
@@ -72,6 +73,9 @@ class LoginRegisterGui:
         #  l1.grid(row=0, column=0, padx=(100, 10)) izq derc
         #  l2.grid(row=1, column=0, pady=(10, 100)) arriba abajo
 
+    def on_closing(self):
+        self.gui_login.destroy()
+        exit()
 
 # .tq bb yo tambien :) shh
 class NotasGui:
