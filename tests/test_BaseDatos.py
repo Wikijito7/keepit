@@ -115,7 +115,8 @@ def test_insert_delete_all():
 def test_initial_insert_select():
     """
     Comprueba la insercción por defecto de los datos, la comprobación se realizará mediante el método select()
-    el cuál devuelve una lista compuesta de una tupla por registro
+    el cuál devuelve una lista compuesta de una tupla por registro.
+    El método select() devuelve una lista con todos los registros de una tabla
     """
     # Se insertan los datos por defecto
     bd_test.initial_insert()
@@ -133,7 +134,7 @@ def test_initial_insert_select():
     # Comprueba que se inserta la nota por defecto
     bd_test.cursor.execute("Select * from notas")
     assert bd_test.cursor.rowcount == 1
-    id_nota = bd_test.obtain_last_id_notas() # El id de la nota se inserta por defectp por ello utilizamos este métdo
+    id_nota = bd_test.obtain_last_id_notas()  # El id de la nota se inserta por defectp por ello utilizamos este métdo
     assert bd_test.select("notas") == [(id_nota, 'Exámen', 'Preparar examen de prog', 'Alberti', 'test@test.es')]
 
     # Comprueba que se inserta la etiqueta por defecto
@@ -147,4 +148,36 @@ def test_initial_insert_select():
     assert bd_test.select("Notas_has_Etiquetas") == [(id_nota, 1)]
 
 
+def test_usuario_login():
+    """
+    Comprueba siel usuario existe para hacer el login
+    Si este se encuentra en la tabla de usuarios se logea si devuelve None
+    :return Usuario Object: Si el usuario existe, None si el usuario no existe
+    """
+    # El usuario existe devuelve un objeto de tipo Usuario con sus datos
+    assert bd_test.usuario_login("guille@test.es", "Amapola")
+    usu = bd_test.usuario_login("guille@test.es", "Amapola")
+    assert usu.email == "guille@test.es"
+    assert usu.password == "Amapola"
+    # El usuario no existe decuelve None
+    assert bd_test.usuario_login("no_existo@test.es", "no_existo") == None
 
+
+def test_select_filter():
+    """
+    Comprueba que la función select filter decuelve una lista del resultado de hacer una consulta
+    a partir de una tabla, y dos parámetros columna y valor
+    :return list: contenido del select
+    """
+
+    # devuelve de la tabla de usuasrios los usuarios que contengan en su correo @test.es
+    assert bd_test.select_filtrado("usuario", ("email", "@test")) == [('guille@test.es', 'Amapola'),
+                                                                      ('test@test.es', 'paulaquejica')]
+    # devuelve solo los usuarios que contenga pola en su contrasena
+    assert bd_test.select_filtrado("usuario", ("contrasena", "pola")) == [('guille@test.es', 'Amapola')]
+
+    # devuelve una lista vacia al no contener nada
+    assert bd_test.select_filtrado("usuario", ("email", "zs")) == []
+
+def test_update():
+    pass
