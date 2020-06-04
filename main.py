@@ -586,44 +586,16 @@ class BusquedaGui:
 
 
 if __name__ == "__main__":
-    # Usuario y contraseña
-    manf = open("bd.txt", "r")
-    # Test conexion clase BaseDatos
+    manf = open("bd.txt", "r") # Archivo contiene usuario y conrtaseña
     bd = BaseDatos("localhost", manf.readline().rstrip(), manf.readline().rstrip(),
                    "keepit")  # host, user, passw, nombre_bd
-    # Test atributo execute clase BaseDatos
     manf.close()
-    # bd.cursor.execute("delete from usuario")
-    # bd.cursor.execute("delete from notas")
-    # bd.cursor.execute("delete from categorias")
-    # bd.cursor.execute("delete from etiquetas")
-    bd.conexion.commit()
-
-    # Tests metodo insert clase BaseDatos 
-    # bd.insert("usuario", ("test@test.es", "paulaquejica"))
-    # bd.insert("usuario", ("guille@test.es", "frantusmuerto"))
-    #
-    # bd.insert("categorias", ("paula",))
-    # bd.insert("categorias", ("escocia",))
-    #
-    # bd.insert("notas", (None, "Quejica", "Eres una quejica", "paula", "guille@test.es"))
-    # bd.insert("notas", (None, "Lloro", "hola soy un llorica Davileño", "paula", "guille@test.es"))
-    #
-    # bd.insert("etiquetas", ("quejas", 1))
-    #
-    # id = bd.obtain_id_notas()
-    # bd.insert("Notas_has_Etiquetas", (id, 1))
-
-    """
-     self.btn_exit = tk.Button(self.gui_login, text="Exit", width="10", height="2",
-                                  command=self.exit_login)
-    """
-
-    #  print(bd.select("usuario"))
+    bd.delete_all_database()
+    bd.initial_insert()
     print(bd.select_filtrado("usuario", ("email", "test@")))
     print(bd.select("Categorias"))
 
-    print(bd.usuario_login("guille@test.es", "frantusmuerto"))
+    print(bd.usuario_login("guille@test.es", "amapola"))
 
     LoginRegisterGui(bd)
     # usuario = bd.usuario_login("guille@test.es", "frantusmuerto")

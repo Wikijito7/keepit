@@ -115,6 +115,23 @@ class BaseDatos:
             return True
         return False
 
+    def delete_all_database(self):
+        """Borra toda la base de datos"""
+        self.cursor.execute("delete from usuario")
+        self.cursor.execute("delete from notas")
+        self.cursor.execute("delete from categorias")
+        self.cursor.execute("delete from etiquetas")
+        self.conexion.commit()
+
+    def initial_insert(self):
+        self.insert("usuario", ("test@test.es", "paulaquejica"))
+        self.insert("usuario", ("guille@test.es", "Amapola"))
+        self.insert("categorias", ("Alberti",))
+        self.insert("notas", (None, "Exámen", "Preparar examen de prog", "Alberti", "test@test.es"))
+        self.insert("etiquetas", ("Examenes", 1))
+        id = self.obtain_last_id_notas()
+        self.insert("Notas_has_Etiquetas", (id, 1))
+
 
 class Nota:
     def __init__(self, titulo, contenido, categoria, usuario, identificador, etiquetas=None):
