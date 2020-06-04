@@ -77,6 +77,7 @@ class LoginRegisterGui:
         self.gui_login.destroy()
         exit()
 
+
 # .tq bb yo tambien :) shh
 class NotasGui:
     def __init__(self, usuario, bd):
@@ -586,8 +587,10 @@ class BusquedaGui:
 
 
 if __name__ == "__main__":
-    manf = open("bd.txt", "r") # Archivo contiene usuario y conrtaseña
+    manf = open("bd.txt", "r")  # Archivo contiene usuario y conrtaseña
     bd = BaseDatos("localhost", manf.readline().rstrip(), manf.readline().rstrip(),
                    "keepit")  # host, user, passw, nombre_bd
     manf.close()
+    bd.delete_all_database()
+    bd.initial_insert()
     LoginRegisterGui(bd)

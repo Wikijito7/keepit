@@ -179,5 +179,6 @@ def test_select_filter():
     # devuelve una lista vacia al no contener nada
     assert bd_test.select_filtrado("usuario", ("email", "zs")) == []
 
-def test_update():
+
+def test_update_nota():
     pass
