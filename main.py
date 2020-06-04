@@ -590,13 +590,4 @@ if __name__ == "__main__":
     bd = BaseDatos("localhost", manf.readline().rstrip(), manf.readline().rstrip(),
                    "keepit")  # host, user, passw, nombre_bd
     manf.close()
-    bd.delete_all_database()
-    bd.initial_insert()
-    print(bd.select_filtrado("usuario", ("email", "test@")))
-    print(bd.select("Categorias"))
-
-    print(bd.usuario_login("guille@test.es", "amapola"))
-
     LoginRegisterGui(bd)
-    # usuario = bd.usuario_login("guille@test.es", "frantusmuerto")
-    # NotasGui(usuario, bd)
