@@ -51,7 +51,6 @@ def test_insert_delete_all():
 
     bd_test.delete_all_database()
 
-
     # Comprueba método delete_all_dfatabase()
     bd_test.delete_all_database()
     bd_test.cursor.execute("Select * from usuario")
@@ -111,3 +110,41 @@ def test_insert_delete_all():
     assert bd_test.cursor.rowcount == 0
     bd_test.cursor.execute("select * from Notas_has_Etiquetas")
     assert bd_test.cursor.rowcount == 0
+
+
+def test_initial_insert_select():
+    """
+    Comprueba la insercción por defecto de los datos, la comprobación se realizará mediante el método select()
+    el cuál devuelve una lista compuesta de una tupla por registro
+    """
+    # Se insertan los datos por defecto
+    bd_test.initial_insert()
+
+    # Comprueba que se insertan los dos usuarios por defecto
+    bd_test.cursor.execute("Select * from usuario")
+    assert bd_test.cursor.rowcount == 2
+    assert bd_test.select("usuario") == [('guille@test.es', 'Amapola'), ('test@test.es', 'paulaquejica')]
+
+    # Comprueba que se inserta la categoría por defecto
+    bd_test.cursor.execute("Select * from categorias")
+    assert bd_test.cursor.rowcount == 1
+    assert bd_test.select("categorias") == [('Alberti',)]
+
+    # Comprueba que se inserta la nota por defecto
+    bd_test.cursor.execute("Select * from notas")
+    assert bd_test.cursor.rowcount == 1
+    id_nota = bd_test.obtain_last_id_notas() # El id de la nota se inserta por defectp por ello utilizamos este métdo
+    assert bd_test.select("notas") == [(id_nota, 'Exámen', 'Preparar examen de prog', 'Alberti', 'test@test.es')]
+
+    # Comprueba que se inserta la etiqueta por defecto
+    bd_test.cursor.execute("Select * from etiquetas")
+    assert bd_test.cursor.rowcount == 1
+    assert bd_test.select("etiquetas") == [('Examenes', 1)]
+
+    # Comprueba la tabla notas_has_etiquetas
+    bd_test.cursor.execute("Select * from Notas_has_Etiquetas")
+    assert bd_test.cursor.rowcount == 1
+    assert bd_test.select("Notas_has_Etiquetas") == [(id_nota, 1)]
+
+
+

@@ -131,6 +131,7 @@ class BaseDatos:
         self.insert("etiquetas", ("Examenes", 1))
         id = self.obtain_last_id_notas()
         self.insert("Notas_has_Etiquetas", (id, 1))
+        self.conexion.commit()
 
 
 class Nota:
