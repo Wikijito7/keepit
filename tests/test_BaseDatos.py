@@ -160,7 +160,7 @@ def test_usuario_login():
     assert usu.email == "guille@test.es"
     assert usu.password == "Amapola"
     # El usuario no existe decuelve None
-    assert bd_test.usuario_login("no_existo@test.es", "no_existo") == None
+    assert bd_test.usuario_login("no_existo@test.es", "no_existo") is None
 
 
 def test_select_filter():
@@ -180,22 +180,35 @@ def test_select_filter():
     assert bd_test.select_filtrado("usuario", ("email", "zs")) == []
 
 
+def test_exists_nota():
+    """
+    Comprueba si existe la nota a partir de su titulo
+    :returns bool: True si existe la nota, False si no existe la nota
+    """
+    # La nota con título examen existe
+    assert bd_test.exist_nota("Examen") == True
+    # La nota con título prueba no existe
+    assert bd_test.exist_nota("Prueba") == False
 
 
+def test_exists_categoria():
+    """
+    Comprueba si existe la categoría
+    :returns bool: True si existe, False si no existe
+    """
+    # La categoría Alberti existe
+    assert bd_test.exists_categoria("Alberti") == True
 
-
-
-
-
-
-
+    # La categoría Drago no existe
+    assert bd_test.exists_categoria("Drago") == False
 
 
 def test_update_nota():
     """
     Recibe como argumento una nota que actualiza la que ya existia a parit de un identificador
+    TODO Revisar si a función se va ha utilizar
+    TODO Instanciar la nota bien  Cristian Mirame esto que no consigo introducir la etiqueta me salta el raise
     """
-
     # Introduzco una nota nueva y etiqueta
     bd_test.insert("categorias", ("Viajes",))
     bd_test.insert("notas", (None, "Madrid", "Preparar el coche para el vieaje", "Viajes", "test@test.es"))
@@ -207,10 +220,46 @@ def test_update_nota():
                                                                    'Viajes', 'test@test.es')]
     # Preparamos una instancia de Nota con la misma id para sustituirla por la que antes tenia su id
     # La instanciamos
-    # TODO Cristian Mirame esto que no consigo introducir la etiqueta me salta el raise
     nota_updated = Nota("Barcelona", "Preaprar carabana para el viaje", "Viajes", "test@test.es", id, [])
     bd_test.update_nota(nota_updated)
 
     # Comprobamos si se ha actualizado
     assert bd_test.select_filtrado("notas", ("id_notas", id)) == [(id, 'Barcelona', 'Preparar carabana para el vieaje',
                                                                    'Viajes', 'test@test.es')]
+
+
+def test_obtain_last_id_notas():
+    """
+    Comprueba si el método obtiene la última id de notas, Lo comprobaré mediante una consulta
+    de la ultima id
+    """
+    # Obtengo la última id
+    bd_test.cursor.execute("Select max(id_notas) from Notas")
+    # Comprueba si coincide con la id devuelta por el método
+    assert bd_test.cursor.fetchall()[0][0] == bd_test.obtain_last_id_notas()
+
+
+def test_obtain_id_etiquetas():
+    """
+    Comprueba si el método devuelve el id de la etiqueta seleccionada
+    """
+    # Obtengo la última id
+    n_etiqueta = "Examenes"
+    # Realizp la consulta
+    bd_test.cursor.execute("select id_etiquetas from Etiquetas where nombre like '" + n_etiqueta + "'")
+    # Compruebo si devuleve lo mismo
+    assert bd_test.cursor.fetchall()[0][0] == bd_test.obtain_id_etiquetas(n_etiqueta)
+
+
+def test_obtain_etiqueta():
+    """
+    Comprueba si se devuelve una lista con la etiqueta a partir de la id, lo comprobaré mediante el método select(),
+    """
+    # Obtengo la id de las etiquetas
+    id_etiqueta = bd_test.obtain_id_etiquetas("Examenes")
+    # Saviendo que la id corresponde a Examenes la comparo directamente con Examenes
+    assert bd_test.obtain_etiqueta(id_etiqueta)[0][0] == "Examenes"
+
+
+# Elimino los datos de la base de datos al final el test de su clase
+bd_test.delete_all_database()

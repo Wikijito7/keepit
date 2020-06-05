@@ -9,4 +9,24 @@ Así pués contaremos con tres archivos de test basados en pytest:
     > test_Nota.
     > test_Usuario.
 
+test_BaseDatos
 
+- test_init() Comprueba constructor HECHO !!
+- test_get_conexion() Comprueba el ge6er de conexión, si decuelve el tipo y la conexión HECHO !!
+- test_insert_delete_all() Comprueba métodos insert(), y delete_all() HECHO !!
+- test_initial_insert_select() Comprueba la insercción por defecto de los datos, la comprobación se realizará mediante el método select()
+    el cuál devuelve una lista compuesta de una tupla por registro.
+    El método select() devuelve una lista con todos los registros de una tabla HECHO !!
+- test usuario_logion() Comprueba siel usuario existe para hacer el login
+    Si este se encuentra en la tabla de usuarios se logea si devuelve None HECHO !!
+- test test_select_filter() Comprueba que la función select filter decuelve una lista del resultado de hacer una consulta
+    a partir de una tabla, y dos parámetros columna y valor HECHO !!
+- test_exists_nota() Comprueba si existe la nota a partir de su titulo HECHO !!
+- test_exists_categoria() Comprueba si existe la categoría HECHO !!
+- test_update_nota()  Comrpueba que se actualize la nota a partir de una instancia de nota con la misma id de la nota que ya estaba
+    en la base de datos NO HECHO !!
+- test_obtain_last_id_notas() Comprueba que se obtiene la última id de la nota HECHO !!
+- test_obtain_id_etiquetas() Comprueba si el método devuelve el id de la etiqueta seleccionada HECHO !!
+- test_obtain_etiqueta() Comprueba si el método devuelve el nombre de la nota a partir de su id HECHO !!
+
+test_Nota
