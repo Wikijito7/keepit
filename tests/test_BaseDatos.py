@@ -180,5 +180,37 @@ def test_select_filter():
     assert bd_test.select_filtrado("usuario", ("email", "zs")) == []
 
 
+
+
+
+
+
+
+
+
+
+
+
 def test_update_nota():
-    pass
+    """
+    Recibe como argumento una nota que actualiza la que ya existia a parit de un identificador
+    """
+
+    # Introduzco una nota nueva y etiqueta
+    bd_test.insert("categorias", ("Viajes",))
+    bd_test.insert("notas", (None, "Madrid", "Preparar el coche para el vieaje", "Viajes", "test@test.es"))
+    # bd_test.insert("etiquetas", ("Verano", 2))
+
+    # Comprobamos la nota que acabo de añadir
+    id = bd_test.obtain_last_id_notas()
+    assert bd_test.select_filtrado("notas", ("id_notas", id)) == [(id, 'Madrid', 'Preparar el coche para el vieaje',
+                                                                   'Viajes', 'test@test.es')]
+    # Preparamos una instancia de Nota con la misma id para sustituirla por la que antes tenia su id
+    # La instanciamos
+    # TODO Cristian Mirame esto que no consigo introducir la etiqueta me salta el raise
+    nota_updated = Nota("Barcelona", "Preaprar carabana para el viaje", "Viajes", "test@test.es", id, [])
+    bd_test.update_nota(nota_updated)
+
+    # Comprobamos si se ha actualizado
+    assert bd_test.select_filtrado("notas", ("id_notas", id)) == [(id, 'Barcelona', 'Preparar carabana para el vieaje',
+                                                                   'Viajes', 'test@test.es')]

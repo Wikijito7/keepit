@@ -49,7 +49,7 @@ class BaseDatos:
             # TODO: Añadir warning
             raise ValueError("Parámetros debe ser una tupla con dos parámetros.")
 
-    #TODO CREO QUE ESTA FUNCIÓN SOBRA
+    # TODO CREO QUE ESTA FUNCIÓN SOBRA
     """
     def update(self, tabla, parametros: tuple):
         # TODO Pendiente de datle una vueltes
@@ -60,6 +60,7 @@ class BaseDatos:
             # TODO añadir warning
             raise ValueError("Debes introducir una tupla en el método update.")
     """
+
     def update_nota(self, nota):
         self.cursor.execute("update notas set titulo = %s, contenido = %s, categoria = %s where id_notas = %s",
                             (nota.get_titulo(), nota.get_contenido(), nota.get_categoria(), str(nota.identificador)))
@@ -126,6 +127,7 @@ class BaseDatos:
         self.conexion.commit()
 
     def initial_insert(self):
+        """Inserta los datos por defecto"""
         self.insert("usuario", ("test@test.es", "paulaquejica"))
         self.insert("usuario", ("guille@test.es", "Amapola"))
         self.insert("categorias", ("Alberti",))
