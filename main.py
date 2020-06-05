@@ -579,18 +579,11 @@ class BusquedaGui:
         self.load_widgets_busqueda()
 
 
-# Crear el formulario de login/register DONE
-# Crear el formulario de las notas DONE
-# Crear el formulario de añadir una nueva nota DONE
-# Crear el formulario de modificar la nota DONE
-# Crear el formulario de busqueda
-
-
 if __name__ == "__main__":
     manf = open("bd.txt", "r")  # Archivo contiene usuario y conrtaseña
     bd = BaseDatos("localhost", manf.readline().rstrip(), manf.readline().rstrip(),
                    "keepit")  # host, user, passw, nombre_bd
     manf.close()
-    bd.delete_all_database()
-    bd.initial_insert()
+    # bd.delete_all_database() # DESCOMENTAR FUNCIONES PARA INSERTAR DATOS POR DEFECTO
+    # bd.initial_insert()
     LoginRegisterGui(bd)

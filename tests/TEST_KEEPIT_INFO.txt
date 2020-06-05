@@ -44,4 +44,10 @@ test_Nota
 - test_set_contenido() Comprueba si se actualiza el titulo de la nota HECHO !!
 - test_str_nota() Comprueba si se devuelve la nota completa en formato str HECHO !!
 
+test_Usuario
+
+- test_init() Comprueba el constructor y atributos
+- test_get_email() Comprueba que se devuelve el email del usuario
+- test_str_Usuario() Comrpueba que devuelve en formato str el usuario completo
+
 
