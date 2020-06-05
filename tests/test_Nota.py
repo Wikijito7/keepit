@@ -2,7 +2,7 @@
 Tests de la Clase Nota
 """
 import pytest
-from ProyectoEEDES.keepit import *
+from keepit import *
 
 # Instancio la nota ya que es la que se va ha utilizar para los test
 usuario_test = Usuario("test@test.es", "Amapola")

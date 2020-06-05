@@ -3,7 +3,7 @@ Tests de la calse Usuario. Esta simplemente se utiliza para logear registrar usu
 las notas quedan registradas al email de estos usuario
 """
 import pytest
-from ProyectoEEDES.keepit import Usuario
+from keepit import Usuario
 
 usuario_test = Usuario("test@test.es", "amapola")
 

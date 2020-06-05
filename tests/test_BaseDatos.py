@@ -4,7 +4,7 @@ Esta hace de conexión entre la aplicación y los datos
 """
 import pytest
 
-from ProyectoEEDES.keepit import *
+from keepit import *
 
 # Instancia el objeto sobre el que se van a realizar las pruebas
 # pepito y grillo es el usuario y la contraseña de la base de datos
@@ -37,7 +37,7 @@ def test_init():
 
 def test_get_conexion():
     """
-    Comprueba el ge6er de conexión, si decuelve el tipo y la conexión
+    Comprueba el ge6er de conexión, si devuelve el tipo y la conexión
     """
     assert bd_test.get_conexion() == bd_test.conexion
     assert type(bd_test.get_conexion()) == pymysql.connections.Connection
