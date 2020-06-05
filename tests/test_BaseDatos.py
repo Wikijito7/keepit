@@ -206,8 +206,6 @@ def test_exists_categoria():
 def test_update_nota():
     """
     Recibe como argumento una nota que actualiza la que ya existia a parit de un identificador
-    TODO Revisar si a función se va ha utilizar
-    TODO Instanciar la nota bien  Cristian Mirame esto que no consigo introducir la etiqueta me salta el raise
     """
     # Introduzco una nota nueva y etiqueta
     bd_test.insert("categorias", ("Viajes",))
@@ -220,11 +218,12 @@ def test_update_nota():
                                                                    'Viajes', 'test@test.es')]
     # Preparamos una instancia de Nota con la misma id para sustituirla por la que antes tenia su id
     # La instanciamos
-    nota_updated = Nota("Barcelona", "Preaprar carabana para el viaje", "Viajes", "test@test.es", id, [])
+    nota_updated = Nota("Barcelona", "Preaprar carabana para el viaje", "Viajes",
+                        Usuario("test@test.es", "paulaquejica"), id, [])
     bd_test.update_nota(nota_updated)
 
     # Comprobamos si se ha actualizado
-    assert bd_test.select_filtrado("notas", ("id_notas", id)) == [(id, 'Barcelona', 'Preparar carabana para el vieaje',
+    assert bd_test.select_filtrado("notas", ("id_notas", id)) == [(id, 'Barcelona', 'Preaprar carabana para el viaje',
                                                                    'Viajes', 'test@test.es')]
 
 

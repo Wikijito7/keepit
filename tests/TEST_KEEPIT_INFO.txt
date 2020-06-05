@@ -24,9 +24,24 @@ test_BaseDatos
 - test_exists_nota() Comprueba si existe la nota a partir de su titulo HECHO !!
 - test_exists_categoria() Comprueba si existe la categoría HECHO !!
 - test_update_nota()  Comrpueba que se actualize la nota a partir de una instancia de nota con la misma id de la nota que ya estaba
-    en la base de datos NO HECHO !!
+    en la base de datos HECHO !!
 - test_obtain_last_id_notas() Comprueba que se obtiene la última id de la nota HECHO !!
 - test_obtain_id_etiquetas() Comprueba si el método devuelve el id de la etiqueta seleccionada HECHO !!
 - test_obtain_etiqueta() Comprueba si el método devuelve el nombre de la nota a partir de su id HECHO !!
 
 test_Nota
+
+- test_get_etiquetas() Comprueba que devuelve la o las etiquetas de una nota HECHO !!
+- test_get_categoria() Comrpueba que devuelve la categoría HECHO !!
+- test_get_titulo() Comprueba que devuelve el título de la nota HECHO !!
+- test_get_contenido() Comprueba que devuelve el contenido de la nota HECHO !!
+- test_get_as_list() Comprueba que devuelve id, titulo, categoría y email de la nota HECHO !!
+- test_get_etiquetas_str() Comprueba que devuelve la etiqueta en formato str en lugar de string HECHO !!
+- test_set_etiquetas() Sustituye las etiquetas en la nota HECHO !!
+- test_add_etiqueta() Añade nuevas etiquetas a las ya existentes en la nota HECHO !!
+- test_set_categoria() Comprueba que se sustituye la categoría HECHO !!
+- test_set_titulo() Comprueba si se actualiza el titulo de la nota HECHO !!
+- test_set_contenido() Comprueba si se actualiza el titulo de la nota HECHO !!
+- test_str_nota() Comprueba si se devuelve la nota completa en formato str HECHO !!
+
+

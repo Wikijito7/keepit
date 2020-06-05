@@ -49,18 +49,6 @@ class BaseDatos:
             # TODO: Añadir warning
             raise ValueError("Parámetros debe ser una tupla con dos parámetros.")
 
-    # TODO CREO QUE ESTA FUNCIÓN SOBRA
-    """
-    def update(self, tabla, parametros: tuple):
-        # TODO Pendiente de datle una vueltes
-        if isinstance(parametros, tuple) and len(parametros) == 2:
-            self.cursor.execute("update " + tabla + " set " + parametros[0] + " = " + parametros[1])
-            self.conexion.commit()
-        else:
-            # TODO añadir warning
-            raise ValueError("Debes introducir una tupla en el método update.")
-    """
-
     def update_nota(self, nota):
         self.cursor.execute("update notas set titulo = %s, contenido = %s, categoria = %s where id_notas = %s",
                             (nota.get_titulo(), nota.get_contenido(), nota.get_categoria(), str(nota.identificador)))
