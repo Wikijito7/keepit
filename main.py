@@ -1,10 +1,7 @@
 import tkinter as tk
-import tkinter.ttk as ttk
 from tkinter import messagebox
-from tkinter.ttk import Treeview
 from keepit import *
 import sys
-import os
 
 
 class LoginRegisterGui:
