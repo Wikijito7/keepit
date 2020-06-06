@@ -18,3 +18,9 @@ Un ejemplo sería así:
 root
 
 root
+
+O bien utilizar el usario pepito grillo dentro del archivo de la "keepit.sql" y introducir en "bd.txt"
+
+pepito
+
+grillo
